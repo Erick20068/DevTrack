@@ -41,6 +41,9 @@ interface GoalDao {
     @Query("SELECT * FROM goals ORDER BY createdAt DESC")
     fun all(): LiveData<List<Goal>>
 
+    @Query("SELECT * FROM goals ORDER BY createdAt DESC")
+    suspend fun allNow(): List<Goal>
+
     @Insert
     suspend fun insert(goal: Goal): Long
 

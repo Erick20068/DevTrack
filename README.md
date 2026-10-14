@@ -29,14 +29,16 @@ Creada por [Erick Guaillas](https://github.com/erickguaillasest-dev) · Cuenca, 
 
 ## 🗺️ Roadmap
 
-- [ ] **v2**: Asistente conectado a Groq API (respuestas con IA generativa)
+- [x] **v2**: Asistente conectado a Groq IA — responde cualquier pregunta sobre la app, tus tareas y metas (Llama 3.3 70B), además de los comandos locales offline
+- [x] **v2**: Control de Spotify por voz — *"siguiente canción"*, *"pausa"*, *"pon AC/DC"* ⏮ ⏯ ⏭
+- [x] **v2**: *"Motívame"* = frase motivadora + AC/DC sonando 🔥
 - [ ] Widget de tareas en pantalla de inicio
 - [ ] Sistema de rachas (streaks) con 🔥
-- [ ] Más barajas de repaso (Python, Docker, Git)
+- [ ] Más barajas de repaso (Python avanzado, Docker, Kubernetes)
 - [ ] Estadísticas semanales en la bitácora
 - [ ] Publicación en Play Store
 
-## 🎤 Comandos de voz (v1)
+## 🎤 Comandos de voz
 
 ```
 "agregar tarea repasar java"
@@ -45,7 +47,21 @@ Creada por [Erick Guaillas](https://github.com/erickguaillasest-dev) · Cuenca, 
 "estuve programando la app"    → guarda en Bitácora (💻 Código)
 "abre repaso" / "abre metas"   → navega a la sección
 "qué tengo hoy"                → lee tus tareas pendientes en voz alta
+"motívame"                     → frase motivadora + AC/DC en Spotify 🔥
+"pon AC/DC" / "pon salsa"      → busca y abre eso en Spotify
+"siguiente canción" / "pausa" / "dale play" → controla Spotify* 
 ```
+\* Requiere activar **Acceso a notificaciones** una vez (la app te guía con un diálogo).
+
+## 🧠 Asistente con IA (Groq)
+
+Con una clave gratis de [console.groq.com](https://console.groq.com) en `local.properties`:
+
+```properties
+GROQ_API_KEY=gsk_tu_clave
+```
+
+El asistente entiende lenguaje natural y **conoce toda la app + tus tareas y metas actuales**. Sin clave, usa el modo offline con comandos fijos.
 
 ---
 *Proyecto de portafolio — código limpio, arquitectura por capas (data / ui).*

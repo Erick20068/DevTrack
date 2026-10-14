@@ -1,11 +1,14 @@
 package com.erickguaillas.devtrack.ui.asistente
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -17,10 +20,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.erickguaillas.devtrack.BuildConfig
 import com.erickguaillas.devtrack.R
 import com.erickguaillas.devtrack.data.DevRepository
 import com.erickguaillas.devtrack.data.Wellness
+import com.erickguaillas.devtrack.data.network.GroqBrain
 import com.erickguaillas.devtrack.databinding.FragmentAsistenteBinding
+import com.erickguaillas.devtrack.ui.SpotifyMedia
 import com.erickguaillas.devtrack.ui.VoiceCommands
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -54,8 +60,13 @@ class AsistenteFragment : Fragment(R.layout.fragment_asistente) {
             else micPermission.launch(Manifest.permission.RECORD_AUDIO)
         }
 
-        b.btnMotivate.setOnClickListener { speak(Wellness.randomMotivacion()) }
-        b.btnSpotify.setOnClickListener { openSpotify() }
+        b.btnMotivate.setOnClickListener { motivate() }
+        b.btnSpotify.setOnClickListener { openSpotify("workout motivation") }
+
+        // Controles de reproducción ⏮ ⏯ ⏭
+        b.btnNext.setOnClickListener { mediaWithPermission { SpotifyMedia.next(requireContext()) } }
+        b.btnPlayPause.setOnClickListener { mediaWithPermission { SpotifyMedia.playPause(requireContext()) } }
+        b.btnPrev.setOnClickListener { mediaWithPermission { SpotifyMedia.prev(requireContext()) } }
     }
 
     // ─── Escucha ───
@@ -73,7 +84,7 @@ class AsistenteFragment : Fragment(R.layout.fragment_asistente) {
                     b.tvStatus.text = "🎙️ Toca el micrófono y habla"
                     if (heard != null) {
                         b.tvHeard.text = "Entendí: \"$heard\""
-                        handle(heard)
+                        think(heard)
                     }
                 }
                 override fun onError(error: Int) {
@@ -91,13 +102,75 @@ class AsistenteFragment : Fragment(R.layout.fragment_asistente) {
             startListening(Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
                 putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
                 putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-EC")
-                putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "es-EC")
             })
         }
     }
 
-    // ─── Ejecutar comando ───
-    private fun handle(heard: String) {
+    /** Primero Groq (entiende todo); si falla/sin clave → parser local offline */
+    private fun think(heard: String) {
+        if (BuildConfig.GROQ_API_KEY.isNotBlank()) {
+            b.tvStatus.text = "🤖 Pensando..."
+            lifecycleScope.launch {
+                val context = buildString {
+                    append(repo.tasksSummary()).append(". ").append(repo.goalsSummary())
+                }
+                val action = GroqBrain.think(heard, context, BuildConfig.GROQ_API_KEY)
+                b.tvStatus.text = "🎙️ Toca el micrófono y habla"
+                if (action != null) execute(action) else handleLocal(heard)
+            }
+        } else {
+            handleLocal(heard)
+        }
+    }
+
+    private fun execute(a: GroqBrain.Action) {
+        when (a) {
+            is GroqBrain.Action.AddTask -> {
+                lifecycleScope.launch { repo.addTask(a.text) }
+                speak("Listo, tarea agregada: ${a.text}")
+            }
+            is GroqBrain.Action.AddJournal -> {
+                lifecycleScope.launch { repo.addJournal(a.text, a.category) }
+                speak("Registrado en tu bitácora. Buen trabajo.")
+            }
+            is GroqBrain.Action.Navigate -> {
+                val dest = when (a.dest) {
+                    "aprender" -> R.id.nav_aprender to "Aprender"
+                    "entrena" -> R.id.nav_entrena to "Entrena"
+                    "bitacora" -> R.id.nav_bitacora to "Bitácora"
+                    "metas" -> R.id.nav_metas to "Metas"
+                    "asistente" -> R.id.nav_asistente to "Asistente"
+                    else -> R.id.nav_today to "Hoy"
+                }
+                speak("Abriendo ${dest.second}")
+                try { findNavController().navigate(dest.first) } catch (_: Exception) {}
+            }
+            GroqBrain.Action.ReadTasks -> lifecycleScope.launch {
+                speak(repo.pendingTaskTitles())
+            }
+            GroqBrain.Action.Motivate -> motivate()
+            is GroqBrain.Action.SpotifySearch -> {
+                speak("Abriendo ${a.query} en Spotify.")
+                openSpotify(a.query)
+            }
+            GroqBrain.Action.SpotifyNext -> mediaWithPermission {
+                if (SpotifyMedia.next(requireContext())) speak("Siguiente canción.")
+                else speak("No encontré Spotify sonando. Pon play primero.")
+            }
+            GroqBrain.Action.SpotifyPrev -> mediaWithPermission {
+                if (SpotifyMedia.prev(requireContext())) speak("Volvemos a la anterior.")
+                else speak("No encontré Spotify sonando.")
+            }
+            GroqBrain.Action.SpotifyPlayPause -> mediaWithPermission {
+                if (SpotifyMedia.playPause(requireContext())) speak("Hecho.")
+                else speak("No encontré Spotify sonando.")
+            }
+            is GroqBrain.Action.Reply -> speak(a.text)
+        }
+    }
+
+    // ─── Respaldo offline (sin internet / sin clave) ───
+    private fun handleLocal(heard: String) {
         when (val cmd = VoiceCommands.parse(heard)) {
             is VoiceCommands.Command.AddTask -> {
                 lifecycleScope.launch { repo.addTask(cmd.text) }
@@ -114,29 +187,56 @@ class AsistenteFragment : Fragment(R.layout.fragment_asistente) {
             VoiceCommands.Command.ReadTasks -> lifecycleScope.launch {
                 speak(repo.pendingTaskTitles())
             }
-            VoiceCommands.Command.Motivate -> speak(Wellness.randomMotivacion())
-            VoiceCommands.Command.Spotify -> {
-                speak("Abriendo Spotify. A romperla, Erick.")
-                openSpotify()
+            VoiceCommands.Command.Motivate -> motivate()
+            is VoiceCommands.Command.SpotifyQuery -> {
+                speak("Abriendo ${cmd.query} en Spotify.")
+                openSpotify(cmd.query)
+            }
+            VoiceCommands.Command.SpotifyNext -> mediaWithPermission {
+                if (SpotifyMedia.next(requireContext())) speak("Siguiente canción.")
+                else speak("No encontré Spotify sonando.")
+            }
+            VoiceCommands.Command.SpotifyPrev -> mediaWithPermission {
+                if (SpotifyMedia.prev(requireContext())) speak("Canción anterior.")
+                else speak("No encontré Spotify sonando.")
+            }
+            VoiceCommands.Command.SpotifyPlayPause -> mediaWithPermission {
+                if (SpotifyMedia.playPause(requireContext())) speak("Hecho.")
+                else speak("No encontré Spotify sonando.")
             }
             VoiceCommands.Command.Unknown -> speak(
-                "No entendí ese comando. Prueba con: agregar tarea, postulé a, estudié inglés, entrené, abre repaso, motívame, o pon música."
+                "No entendí, Erick. Prueba con: agregar tarea, postulé a, estudié inglés, entrené, abre repaso, motívame, pon AC DC, o siguiente canción."
             )
         }
     }
 
-    // ─── Spotify ───
-    private fun openSpotify() {
-        val query = "workout motivation"
+    // ─── Motivación + AC/DC 🔥 ───
+    private fun motivate() {
+        speak(Wellness.randomMotivacion())
+        Handler(Looper.getMainLooper()).postDelayed({ openSpotify("AC/DC") }, 2800)
+    }
+
+    private fun mediaWithPermission(block: () -> Unit) {
+        if (!SpotifyMedia.hasAccess(requireContext())) {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Permiso de notificaciones 🎵")
+                .setMessage("Para que yo controle Spotify (siguiente, pausa, play), activa el acceso a notificaciones para DevTrack. Solo se usa para leer la sesión de música — nada más.")
+                .setPositiveButton("Activar") { _, _ ->
+                    startActivity(SpotifyMedia.accessIntent())
+                }
+                .setNegativeButton("Ahora no", null)
+                .show()
+        } else block()
+    }
+
+    private fun openSpotify(query: String) {
         try {
-            // App de Spotify instalada
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("spotify:search:$query")).apply {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("spotify:search:${Uri.encode(query)}")).apply {
                 setPackage("com.spotify.android")
             })
         } catch (e: Exception) {
-            // Sin app o no respondió → web
             try {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://open.spotify.com/search/workout%20motivation")))
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://open.spotify.com/search/${Uri.encode(query)}")))
             } catch (e2: ActivityNotFoundException) {
                 Toast.makeText(context, "Instala Spotify o abre tu app de música", Toast.LENGTH_LONG).show()
             }

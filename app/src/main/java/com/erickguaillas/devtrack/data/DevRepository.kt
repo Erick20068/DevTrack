@@ -31,6 +31,18 @@ class DevRepository(context: Context) {
 
     suspend fun addGoal(title: String) = db.goalDao().insert(Goal(title = title))
 
+    suspend fun tasksSummary(): String {
+        val pending = db.taskDao().allNow().filter { !it.done }
+        return if (pending.isEmpty()) "Sin tareas pendientes"
+        else "Tareas pendientes: " + pending.joinToString("; ") { it.title }
+    }
+
+    suspend fun goalsSummary(): String {
+        val goals = db.goalDao().allNow()
+        return if (goals.isEmpty()) "Sin metas registradas"
+        else "Metas: " + goals.joinToString("; ") { "${it.title} (${it.progress}%)" }
+    }
+
     suspend fun bumpGoal(goal: Goal, delta: Int) {
         val p = (goal.progress + delta).coerceIn(0, 100)
         db.goalDao().update(goal.copy(progress = p))

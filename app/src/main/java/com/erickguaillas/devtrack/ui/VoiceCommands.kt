@@ -12,7 +12,10 @@ object VoiceCommands {
         data class Navigate(val destId: Int, val destName: String) : Command()
         object ReadTasks : Command()
         object Motivate : Command()
-        object Spotify : Command()
+        data class SpotifyQuery(val query: String) : Command()
+        object SpotifyNext : Command()
+        object SpotifyPrev : Command()
+        object SpotifyPlayPause : Command()
         object Unknown : Command()
     }
 
@@ -57,8 +60,15 @@ object VoiceCommands {
                 Command.Motivate
 
             // Música
-            t.contains("musica") || t.contains("spotify") || t.contains("cancion") || t.contains("pon algo") ->
-                Command.Spotify
+            t.contains("siguiente") || t.contains("cambia la cancion") || t.contains("otra cancion") ->
+                Command.SpotifyNext
+            t.contains("anterior") -> Command.SpotifyPrev
+            t.contains("pausa") || t.contains("dale play") || t.contains("reproduc") ->
+                Command.SpotifyPlayPause
+            t.startsWith("pon ") && t.length > 4 ->
+                Command.SpotifyQuery(raw.substringAfter(" ", "").trim())
+            t.contains("musica") || t.contains("spotify") || t.contains("cancion") ->
+                Command.SpotifyQuery("workout motivation")
 
             else -> Command.Unknown
         }

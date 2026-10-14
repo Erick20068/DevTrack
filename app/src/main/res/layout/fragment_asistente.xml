@@ -81,11 +81,47 @@
             android:text="🎵 Abrir Spotify — música para entrenar"
             android:textColor="@color/text" />
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPrev"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:text="⏮"
+                android:textColor="@color/text" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPlayPause"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:text="⏯"
+                android:textColor="@color/text" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnNext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:backgroundTint="@color/primary"
+                android:text="⏭"
+                android:textColor="@color/bg" />
+        </LinearLayout>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
-            android:text="Comandos que entiendo:\n\n• «Agregar tarea repasar Java»\n• «Postulé a Anyone AI»\n• «Estudié inglés 30 minutos»\n• «Estuve programando 2 horas»\n• «Entrené pierna hoy»\n• «Abre repaso / metas / entrena»\n• «Qué tengo hoy»\n• «Motívame»\n• «Pon música»"
+            android:text="Comandos que entiendo:\n\n• «Agregar tarea repasar Java»\n• «Postulé a Anyone AI»\n• «Estudié inglés 30 minutos»\n• «Estuve programando 2 horas»\n• «Entrené pierna hoy»\n• «Abre repaso / metas / entrena»\n• «Qué tengo hoy»\n• «Motívame» (frase + AC/DC 🔥)\n• «Pon AC/DC» o cualquier artista\n• «Siguiente canción» · «Pausa» · «Dale play»\n\n🧠 Con Groq activa también puedes preguntarme LO QUE SEA: dudas de la app, de programación, de tu plan… yo conozco tus tareas y metas."
             android:textColor="@color/textDim"
             android:textSize="13sp"
             android:lineSpacingMultiplier="1.4" />
