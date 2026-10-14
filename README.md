@@ -32,6 +32,10 @@ Creada por [Erick Guaillas](https://github.com/erickguaillasest-dev) · Cuenca, 
 - [x] **v2**: Asistente conectado a Groq IA — responde cualquier pregunta sobre la app, tus tareas y metas (Llama 3.3 70B), además de los comandos locales offline
 - [x] **v2**: Control de Spotify por voz — *"siguiente canción"*, *"pausa"*, *"pon AC/DC"* ⏮ ⏯ ⏭
 - [x] **v2**: *"Motívame"* = frase motivadora + AC/DC sonando 🔥
+- [x] **v3**: Checklists de entrenamiento y cuidado corporal con progreso diario
+- [x] **v3**: Modo **Práctica**: problemas reales de código (Git, APIs, Java/Kotlin, SQL, Python/JS) y ejercicios de inglés (escritura, lectura, pronunciación)
+- [x] **v3**: +6 barajas (APIs, Docker, Algoritmos, Redes, Phrasal verbs) y +4 quizzes · Bitácora con filtros y estadísticas · Consejo financiero diario + mentor financiero con IA
+- [x] **v3**: Voz JARVIS opcional con ElevenLabs + autoplay de Spotify
 - [ ] Widget de tareas en pantalla de inicio
 - [ ] Sistema de rachas (streaks) con 🔥
 - [ ] Más barajas de repaso (Python avanzado, Docker, Kubernetes)
@@ -62,6 +66,28 @@ GROQ_API_KEY=gsk_tu_clave
 ```
 
 El asistente entiende lenguaje natural y **conoce toda la app + tus tareas y metas actuales**. Sin clave, usa el modo offline con comandos fijos.
+
+## 🎙️ Voz JARVIS (ElevenLabs) — opcional
+
+Por defecto usa el **TTS del sistema** (voz grave estilo Jarvis). Para voz humana real:
+
+1. Crea cuenta gratis en [elevenlabs.io](https://elevenlabs.io) → **Profile → API key**
+2. Añade a `local.properties`:
+```properties
+ELEVENLABS_API_KEY=sk_tu_clave
+ELEVENLABS_VOICE_ID=onwK4e9ZLuTAKqWW03F9
+```
+3. Si la clave falla o no hay internet, **cae automáticamente al TTS del sistema** (nunca se queda mudo)
+
+| Voz | ID | Estilo |
+|---|---|---|
+| Daniel | `onwK4e9ZLuTAKqWW03F9` | Británica grave — **estilo Jarvis** (default) |
+| Adam | `pNInz6obpgDQGcFmaJgB` | Americana profunda |
+| Arnold | `VR6AewLTigWG4xSOukaG` | Muy grave |
+| Josh | `TxGEqnHWrfWFTfGW9XjX` | Joven grave |
+
+Modelo: `eleven_multilingual_v2` (habla español natural). Alternativas más rápidas/baratas: `eleven_turbo_v2_5`, `eleven_flash_v2_5`.
+💡 Tier gratis de ElevenLabs: ~10.000 caracteres/mes (≈10 min de audio).
 
 ## 🧠 Notas técnicas (gotchas aprendidas)
 

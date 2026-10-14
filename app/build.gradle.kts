@@ -12,6 +12,8 @@ val localProps = Properties().apply {
     if (f.exists()) load(f.inputStream())
 }
 val groqKey = localProps.getProperty("GROQ_API_KEY", "")
+val elevenKey = localProps.getProperty("ELEVENLABS_API_KEY", "")
+val elevenVoice = localProps.getProperty("ELEVENLABS_VOICE_ID", "onwK4e9ZLuTAKqWW03F9") // Daniel: voz británica grave estilo Jarvis
 
 android {
     namespace = "com.erickguaillas.devtrack"
@@ -24,6 +26,8 @@ android {
         versionCode = 1
         versionName = "1.0"
         buildConfigField("String", "GROQ_API_KEY", "\"$groqKey\"")
+        buildConfigField("String", "ELEVENLABS_API_KEY", "\"$elevenKey\"")
+        buildConfigField("String", "ELEVENLABS_VOICE_ID", "\"$elevenVoice\"")
     }
 
     buildTypes {

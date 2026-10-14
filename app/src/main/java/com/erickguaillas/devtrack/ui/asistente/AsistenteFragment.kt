@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -24,11 +25,13 @@ import com.erickguaillas.devtrack.BuildConfig
 import com.erickguaillas.devtrack.R
 import com.erickguaillas.devtrack.data.DevRepository
 import com.erickguaillas.devtrack.data.Wellness
+import com.erickguaillas.devtrack.data.network.ElevenTts
 import com.erickguaillas.devtrack.data.network.GroqBrain
 import com.erickguaillas.devtrack.databinding.FragmentAsistenteBinding
 import com.erickguaillas.devtrack.ui.SpotifyMedia
 import com.erickguaillas.devtrack.ui.VoiceCommands
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.Locale
 
 class AsistenteFragment : Fragment(R.layout.fragment_asistente) {
@@ -38,6 +41,8 @@ class AsistenteFragment : Fragment(R.layout.fragment_asistente) {
     private lateinit var repo: DevRepository
     private var tts: TextToSpeech? = null
     private var recognizer: SpeechRecognizer? = null
+    private var mediaPlayer: MediaPlayer? = null
+    private val voiceCache: File by lazy { File(requireContext().cacheDir, "devtrack_voice.mp3") }
 
     private val micPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -59,6 +64,11 @@ class AsistenteFragment : Fragment(R.layout.fragment_asistente) {
 
         b.btnMotivate.setOnClickListener { motivate() }
         b.btnSpotify.setOnClickListener { openSpotify("workout motivation") }
+
+        b.tvVoiceBadge.text = if (BuildConfig.ELEVENLABS_API_KEY.isBlank())
+            "🎙️ Voz del sistema activa · configura ELEVENLABS_API_KEY para la voz JARVIS"
+        else
+            "🎙️ Voz JARVIS activada (ElevenLabs) · respaldo automático al sistema"
 
         // Controles de reproducción ⏮ ⏯ ⏭
         b.btnNext.setOnClickListener { mediaWithPermission { SpotifyMedia.next(requireContext()) } }
@@ -269,15 +279,53 @@ class AsistenteFragment : Fragment(R.layout.fragment_asistente) {
         }
     }
 
+    // ─── Voz: ElevenLabs (JARVIS) con respaldo al TTS del sistema ───
     private fun speak(text: String) {
         b.tvHeard.text = text
+        val key = BuildConfig.ELEVENLABS_API_KEY
+        if (key.isBlank()) {
+            systemSpeak(text)
+            return
+        }
+        lifecycleScope.launch {
+            val audio = ElevenTts.synthesize(text, key, BuildConfig.ELEVENLABS_VOICE_ID)
+            if (audio != null && audio.isNotEmpty()) playAudio(audio) else systemSpeak(text)
+        }
+    }
+
+    private fun playAudio(bytes: ByteArray) {
+        try {
+            tts?.stop()
+            voiceCache.writeBytes(bytes)
+            mediaPlayer?.release()
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(voiceCache.absolutePath)
+                setOnPreparedListener { it.start() }
+                setOnErrorListener { _, _, _ ->
+                    systemSpeak("No pude reproducir la voz premium, sigo con la del sistema.")
+                    true
+                }
+                prepareAsync()
+            }
+        } catch (e: Exception) {
+            systemSpeak("Error de audio, usando voz del sistema.")
+        }
+    }
+
+    private fun systemSpeak(text: String) {
         tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "devtrack_tts")
     }
 
     override fun onDestroyView() {
         recognizer?.destroy()
+        mediaPlayer?.release(); mediaPlayer = null
+        cacheFileCleanup()
         tts?.stop(); tts?.shutdown()
         super.onDestroyView()
         _b = null
+    }
+
+    private fun cacheFileCleanup() {
+        try { if (voiceCache.exists()) voiceCache.delete() } catch (_: Exception) {}
     }
 }
