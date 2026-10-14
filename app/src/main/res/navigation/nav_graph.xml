@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/nav_today">
+
+    <fragment
+        android:id="@+id/nav_today"
+        android:name="com.erickguaillas.devtrack.ui.today.TodayFragment"
+        android:label="Hoy" />
+    <fragment
+        android:id="@+id/nav_aprender"
+        android:name="com.erickguaillas.devtrack.ui.repaso.RepasoFragment"
+        android:label="Aprender" />
+    <fragment
+        android:id="@+id/nav_entrena"
+        android:name="com.erickguaillas.devtrack.ui.entrena.EntrenaFragment"
+        android:label="Entrena" />
+    <fragment
+        android:id="@+id/nav_bitacora"
+        android:name="com.erickguaillas.devtrack.ui.bitacora.BitacoraFragment"
+        android:label="Bitácora" />
+    <fragment
+        android:id="@+id/nav_metas"
+        android:name="com.erickguaillas.devtrack.ui.metas.MetasFragment"
+        android:label="Metas" />
+    <fragment
+        android:id="@+id/nav_asistente"
+        android:name="com.erickguaillas.devtrack.ui.asistente.AsistenteFragment"
+        android:label="Voz" />
+</navigation>

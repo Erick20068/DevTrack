@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_today"
+        android:icon="@drawable/ic_home"
+        android:title="Hoy" />
+    <item
+        android:id="@+id/nav_aprender"
+        android:icon="@drawable/ic_school"
+        android:title="Aprender" />
+    <item
+        android:id="@+id/nav_entrena"
+        android:icon="@drawable/ic_fitness"
+        android:title="Entrena" />
+    <item
+        android:id="@+id/nav_bitacora"
+        android:icon="@drawable/ic_book"
+        android:title="Bitácora" />
+    <item
+        android:id="@+id/nav_metas"
+        android:icon="@drawable/ic_flag"
+        android:title="Metas" />
+    <item
+        android:id="@+id/nav_asistente"
+        android:icon="@drawable/ic_mic"
+        android:title="Voz" />
+</menu>
