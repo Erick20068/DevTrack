@@ -13,10 +13,6 @@
         android:icon="@drawable/ic_fitness"
         android:title="Entrena" />
     <item
-        android:id="@+id/nav_bitacora"
-        android:icon="@drawable/ic_book"
-        android:title="Bitácora" />
-    <item
         android:id="@+id/nav_metas"
         android:icon="@drawable/ic_flag"
         android:title="Metas" />

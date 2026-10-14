@@ -63,5 +63,13 @@ GROQ_API_KEY=gsk_tu_clave
 
 El asistente entiende lenguaje natural y **conoce toda la app + tus tareas y metas actuales**. Sin clave, usa el modo offline con comandos fijos.
 
+## 🧠 Notas técnicas (gotchas aprendidas)
+
+1. **BottomNavigationView max = 5 items.** Con 6 pestañas: `IllegalArgumentException: Maximum number of items supported by BottomNavigationView is 5` al inflar `activity_main.xml`. → Bitácora se abre desde el botón "Ver mi bitácora completa" en la pantalla **Hoy** (destino sigue en `nav_graph.xml`, solo no está en el menú).
+2. **compileSdk vs librerías.** Este equipo tiene instaladas las plataformas 34, 36.1 y 37.1 (no la 35). Usamos `compileSdk = 34`, por eso `androidx.core:core-ktx` va en **1.13.1** (la 1.15.0 exige SDK 35 y rompe `checkDebugAarMetadata`).
+3. **Comillas dentro de atributos XML.** `android:text="... \"algo\" ..."` rompe el parser → usar `« »` o `&quot;`.
+4. **API keys fuera del repo.** `GROQ_API_KEY` vive en `local.properties` (ignorado por git) y llega a la app vía `BuildConfig.GROQ_API_KEY`.
+5. **Control de Spotify** requiere `DevNotificationListener` declarado en el manifest + permiso de acceso a notificaciones concedido por el usuario; sin él `getActiveSessions` devuelve vacío.
+
 ---
 *Proyecto de portafolio — código limpio, arquitectura por capas (data / ui).*

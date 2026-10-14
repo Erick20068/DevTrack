@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.erickguaillas.devtrack.R
 import com.erickguaillas.devtrack.data.DevRepository
@@ -48,6 +49,9 @@ class TodayFragment : Fragment(R.layout.fragment_today) {
         }
 
         b.fabAddTask.setOnClickListener { showAddTaskDialog() }
+        b.btnOpenJournal.setOnClickListener {
+            findNavController().navigate(R.id.nav_bitacora)
+        }
     }
 
     private fun showAddTaskDialog() {

@@ -46,9 +46,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="8dp"
             android:textColor="@color/primary"
             android:textSize="13sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnOpenJournal"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="📓 Ver mi bitácora completa"
+            android:textColor="@color/text" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvTasks"
