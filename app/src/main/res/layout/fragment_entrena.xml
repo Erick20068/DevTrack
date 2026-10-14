@@ -15,9 +15,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="💪 Entrena"
+            android:text="ENTRENA"
+            android:textAllCaps="true"
+            android:letterSpacing="0.18"
             android:textColor="@color/text"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
@@ -34,7 +36,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             app:cardBackgroundColor="@color/card"
-            app:cardCornerRadius="16dp">
+            app:cardCornerRadius="20dp"
+            app:strokeColor="@color/cardBorder"
+            app:strokeWidth="1dp">
 
             <TextView
                 android:id="@+id/tvExercises"
@@ -58,10 +62,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
-            android:text="🍏 Cuidado del cuerpo (el dev sano rinde más)"
-            android:textColor="@color/text"
-            android:textSize="17sp"
+            android:layout_marginTop="26dp"
+            android:text="CUIDADO DEL CUERPO"
+            android:textAllCaps="true"
+            android:letterSpacing="0.14"
+            android:textColor="@color/textDim"
+            android:textSize="12sp"
             android:textStyle="bold" />
 
         <com.google.android.material.card.MaterialCardView
@@ -69,7 +75,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             app:cardBackgroundColor="@color/card"
-            app:cardCornerRadius="16dp">
+            app:cardCornerRadius="20dp"
+            app:strokeColor="@color/cardBorder"
+            app:strokeWidth="1dp">
 
             <TextView
                 android:id="@+id/tvTips"
@@ -84,10 +92,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
-            android:text="🍎 Calorías de tu comida (con IA)"
-            android:textColor="@color/text"
-            android:textSize="17sp"
+            android:layout_marginTop="26dp"
+            android:text="CALORÍAS DE TU COMIDA · IA"
+            android:textAllCaps="true"
+            android:letterSpacing="0.14"
+            android:textColor="@color/textDim"
+            android:textSize="12sp"
             android:textStyle="bold" />
 
         <LinearLayout

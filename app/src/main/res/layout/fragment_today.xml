@@ -25,9 +25,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="🏠 Tus tareas de hoy"
+            android:text="TAREAS DE HOY"
+            android:textAllCaps="true"
+            android:letterSpacing="0.18"
             android:textColor="@color/textDim"
-            android:textSize="14sp" />
+            android:textSize="11sp"
+            android:textStyle="bold" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progressToday"

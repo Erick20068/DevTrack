@@ -1,0 +1,220 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>DevTrack â€” Vista previa</title>
+<style>
+  :root {
+    --bg:#0C0C10; --surface:#141419; --card:#1B1B22; --border:#26262E;
+    --primary:#E3B341; --primaryDark:#9A7A24; --secondary:#8E8CA8; --text:#F4F1EA; --dim:#9C978E;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',system-ui,sans-serif; }
+  body { background:radial-gradient(1200px 600px at 50% -10%, #1a1810 0%, var(--bg) 55%);
+         min-height:100vh; padding:48px 24px; color:var(--text); }
+  header { text-align:center; margin-bottom:40px; }
+  header h1 { font-size:2.2rem; letter-spacing:.25em; font-weight:300; }
+  header h1 b { font-weight:700; color:var(--primary); letter-spacing:.25em; }
+  header h1 span { color:var(--primary); }
+  header p { color:var(--dim); margin-top:8px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
+          gap:32px; max-width:1300px; margin:0 auto; }
+  .phone { background:#000; border-radius:36px; padding:10px;
+           box-shadow:0 20px 60px rgba(0,0,0,.6), 0 0 0 1px #3a3325; }
+  .screen { background:var(--bg); border-radius:28px; overflow:hidden;
+            display:flex; flex-direction:column; height:560px; }
+  .status { display:flex; justify-content:space-between; padding:10px 18px 4px;
+            font-size:.72rem; color:var(--dim); }
+  .content { flex:1; padding:10px 16px; overflow:hidden; }
+  .h { font-size:1.25rem; font-weight:700; }
+  .sub { color:var(--dim); font-size:.78rem; margin:2px 0 10px; }
+  .accent { color:var(--primary); }
+  .sec { color:var(--secondary); }
+  .bar { height:6px; background:var(--card); border-radius:4px; margin:8px 0 4px; }
+  .bar i { display:block; height:100%; background:var(--primary); border-radius:4px; }
+  .task { background:var(--card); border-radius:12px; padding:11px 13px; margin-bottom:7px;
+          font-size:.85rem; display:flex; gap:9px; align-items:center; }
+  .task::before { content:""; width:16px; height:16px; border:2px solid var(--primary);
+                  border-radius:5px; flex-shrink:0; }
+  .task.done { opacity:.5; text-decoration:line-through; }
+  .task.done::before { background:var(--primary); }
+  .cardbox { background:var(--card); border:1px solid var(--border); border-radius:20px;
+             padding:26px 20px; text-align:center; font-size:1rem; line-height:1.5;
+             flex:1; display:flex; align-items:center; justify-content:center; margin:8px 0; }
+  .q { background:var(--card); border-radius:10px; padding:9px 12px; margin-bottom:7px;
+       font-size:.8rem; }
+  .q.ok { outline:2px solid var(--primary); }
+  .q.dim { opacity:.4; }
+  .modebtn { background:var(--card); border-radius:10px; padding:8px; text-align:center;
+             font-size:.8rem; flex:1; }
+  .modebtn.on { background:var(--primary); color:var(--bg); font-weight:700; }
+  .row { display:flex; gap:8px; margin-bottom:8px; }
+  .fab { position:absolute; right:14px; bottom:14px; width:52px; height:52px; border-radius:50%;
+         background:var(--primary); color:#14100A; font-size:1.6rem; display:flex;
+         align-items:center; justify-content:center; font-weight:700;
+         box-shadow:0 6px 18px rgba(227,179,65,.3); }
+  .navwrap { position:relative; }
+  .journal { background:var(--card); border-radius:12px; padding:10px 12px; margin-bottom:7px;
+             font-size:.82rem; display:flex; gap:10px; }
+  .journal small { display:block; color:var(--dim); margin-top:3px; font-size:.68rem; }
+  .goal { background:var(--card); border-radius:12px; padding:12px; margin-bottom:9px; font-size:.85rem; }
+  .goal .bar { margin:8px 0 2px; }
+  .mic { width:78px; height:78px; border-radius:50%; background:var(--primary); font-size:2rem;
+         color:#14100A; display:flex; align-items:center; justify-content:center; margin:18px auto;
+         box-shadow:0 0 0 10px rgba(227,179,65,.1), 0 0 0 22px rgba(227,179,65,.05); }
+  .btn { border-radius:12px; padding:10px; text-align:center; font-size:.82rem;
+         font-weight:600; margin-bottom:8px; letter-spacing:.04em; }
+  .btn.p { background:var(--primary); color:#14100A; }
+  .btn.o { border:1px solid var(--border); color:var(--text); }
+  .list { font-size:.82rem; line-height:1.9; color:var(--text); }
+  img.food { width:100%; height:110px; object-fit:cover; border-radius:12px; margin:8px 0; }
+  .nav { display:flex; background:var(--surface); padding:8px 2px 12px; }
+  .nav div { flex:1; text-align:center; font-size:.55rem; color:var(--dim); }
+  .nav div i { display:block; font-size:1.05rem; font-style:normal; margin-bottom:2px; }
+  .nav div.on { color:var(--primary); }
+  .screen-label { text-align:center; margin-top:12px; color:var(--dim); font-size:.9rem; }
+  footer { text-align:center; color:var(--dim); margin-top:48px; font-size:.85rem; }
+  .tag { display:inline-block; background:var(--card); padding:4px 12px; border-radius:99px;
+         font-size:.72rem; color:var(--primary); margin:2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><b>DEV</b>TRACK</h1>
+  <p style="letter-spacing:.3em;font-size:.7rem;">TU BITÃCORA DE PROGRAMADOR Â· EDICIÃ“N ORO</p>
+  <div style="margin-top:12px">
+    <span class="tag">Kotlin</span><span class="tag">Material 3</span><span class="tag">Room</span>
+    <span class="tag">Voz</span><span class="tag">Groq Vision</span><span class="tag">Spotify</span>
+  </div>
+</header>
+
+<div class="grid">
+
+  <!-- 1. HOY -->
+  <div>
+    <div class="phone"><div class="screen">
+      <div class="status"><span>9:41</span><span>ðŸ“¶ ðŸ”‹</span></div>
+      <div class="content" style="position:relative;display:flex;flex-direction:column;">
+        <div class="h" style="font-size:.95rem;letter-spacing:.12em;">LUNES 13 DE OCTUBRE</div>
+        <div class="sub">ðŸ  Tus tareas de hoy</div>
+        <div class="bar"><i style="width:66%"></i></div>
+        <div class="sub accent">Hoy: 2 de 3 completadas</div>
+        <div class="task done">Postular a 5 empleos</div>
+        <div class="task done">Estudiar inglÃ©s 30 min</div>
+        <div class="task">1 propuesta en Workana</div>
+        <div class="task">Repasar Java Â· 10 flashcards</div>
+        <div class="fab">+</div>
+      </div>
+      <div class="nav"><div class="on"><i>ðŸ </i>Hoy</div><div><i>ðŸƒ</i>Aprender</div><div><i>ðŸ’ª</i>Entrena</div><div><i>ðŸ““</i>BitÃ¡cora</div><div><i>ðŸŽ¯</i>Metas</div><div><i>ðŸŽ™ï¸</i>Voz</div></div>
+    </div></div>
+    <div class="screen-label">ðŸ  Hoy â€” tareas diarias con progreso</div>
+  </div>
+
+  <!-- 2. APRENDER -->
+  <div>
+    <div class="phone"><div class="screen">
+      <div class="status"><span>9:41</span><span>ðŸ“¶ ðŸ”‹</span></div>
+      <div class="content" style="display:flex;flex-direction:column;">
+        <div class="h">ðŸƒ Aprender</div>
+        <div class="sub" style="border:1px solid var(--border);border-radius:8px;padding:8px;">ðŸŸ£ Kotlin â–¾</div>
+        <div class="row"><div class="modebtn on">ðŸƒ Flashcards</div><div class="modebtn">âœ… Quiz</div></div>
+        <div class="sub">ðŸŸ£ 3/8 Â· toca la tarjeta para voltear</div>
+        <div class="cardbox">Â¿QuÃ© es <b>null safety</b>?<br><br><span class="accent" style="font-size:.8rem;">ðŸ‘† toca para ver la respuesta</span></div>
+        <div class="row"><div class="modebtn">â—€</div><div class="modebtn on">Voltear ðŸ”„</div><div class="modebtn">â–¶</div><div class="modebtn">ðŸ”€</div></div>
+      </div>
+      <div class="nav"><div><i>ðŸ </i>Hoy</div><div class="on"><i>ðŸƒ</i>Aprender</div><div><i>ðŸ’ª</i>Entrena</div><div><i>ðŸ““</i>BitÃ¡cora</div><div><i>ðŸŽ¯</i>Metas</div><div><i>ðŸŽ™ï¸</i>Voz</div></div>
+    </div></div>
+    <div class="screen-label">ðŸƒ 12 barajas: 10 lenguajes + entrevistas + inglÃ©s A1â†’C1</div>
+  </div>
+
+  <!-- 3. QUIZ -->
+  <div>
+    <div class="phone"><div class="screen">
+      <div class="status"><span>9:41</span><span>ðŸ“¶ ðŸ”‹</span></div>
+      <div class="content" style="display:flex;flex-direction:column;">
+        <div class="h">ðŸƒ Aprender</div>
+        <div class="sub" style="border:1px solid var(--border);border-radius:8px;padding:8px;">â˜• Quiz Java â–¾</div>
+        <div class="row"><div class="modebtn">ðŸƒ Flashcards</div><div class="modebtn on">âœ… Quiz</div></div>
+        <div class="sub accent">â˜• Pregunta 3/5 Â· Puntaje: 2</div>
+        <div class="h" style="font-size:.95rem;margin-bottom:10px;">Â¿CuÃ¡nto imprime System.out.println(7 % 3)?</div>
+        <div class="q dim">a) 2</div>
+        <div class="q dim">b) 3</div>
+        <div class="q ok">c) 1</div>
+        <div class="q dim">d) 0</div>
+        <div class="sub accent">âœ… Â¡Correcto! % es el resto: 7/3 = 2 resto 1</div>
+        <div class="btn p">Siguiente âžœ</div>
+      </div>
+      <div class="nav"><div><i>ðŸ </i>Hoy</div><div class="on"><i>ðŸƒ</i>Aprender</div><div><i>ðŸ’ª</i>Entrena</div><div><i>ðŸ““</i>BitÃ¡cora</div><div><i>ðŸŽ¯</i>Metas</div><div><i>ðŸŽ™ï¸</i>Voz</div></div>
+    </div></div>
+    <div class="screen-label">âœ… Quiz interactivo con explicaciÃ³n y puntaje</div>
+  </div>
+
+  <!-- 4. ENTRENA -->
+  <div>
+    <div class="phone"><div class="screen">
+      <div class="status"><span>9:41</span><span>ðŸ“¶ ðŸ”‹</span></div>
+      <div class="content">
+        <div class="h">ðŸ’ª Entrena</div>
+        <div class="sub accent" style="font-weight:700;">ðŸ”¥ Lunes Â· Pecho + trÃ­ceps</div>
+        <div class="task" style="display:block;line-height:1.9;">â€¢ Flexiones Â· 4x10-15<br>â€¢ Flexiones diamante Â· 3x8<br>â€¢ Fondos en silla Â· 3x10<br>â€¢ Plancha Â· 3x30 seg</div>
+        <div class="btn p">âœ… TerminÃ© mi entrenamiento de hoy</div>
+        <div class="h" style="font-size:.95rem;margin-top:6px;">ðŸŽ CalorÃ­as con IA</div>
+        <div class="row">
+          <div class="btn" style="background:var(--secondary);color:var(--bg);flex:1">ðŸ“· Tomar foto</div>
+          <div class="btn o" style="flex:1">ðŸ–¼ï¸ GalerÃ­a</div>
+        </div>
+        <div style="background:var(--card);border-radius:12px;height:90px;display:flex;align-items:center;justify-content:center;font-size:2rem;">ðŸšðŸ—ðŸ¥—</div>
+        <div class="btn p">ðŸ¤– Analizar con IA</div>
+        <div class="sub">ðŸ”¥ ~620 kcal Â· ðŸ’ª 38g proteÃ­na</div>
+      </div>
+      <div class="nav"><div><i>ðŸ </i>Hoy</div><div><i>ðŸƒ</i>Aprender</div><div class="on"><i>ðŸ’ª</i>Entrena</div><div><i>ðŸ““</i>BitÃ¡cora</div><div><i>ðŸŽ¯</i>Metas</div><div><i>ðŸŽ™ï¸</i>Voz</div></div>
+    </div></div>
+    <div class="screen-label">ðŸ’ª Rutina diaria + escÃ¡ner de calorÃ­as con Groq Vision</div>
+  </div>
+
+  <!-- 5. BITÃCORA -->
+  <div>
+    <div class="phone"><div class="screen">
+      <div class="status"><span>9:41</span><span>ðŸ“¶ ðŸ”‹</span></div>
+      <div class="content navwrap" style="position:relative;">
+        <div class="h">ðŸ““ BitÃ¡cora</div>
+        <div class="sub">Todo lo que haces cuenta</div>
+        <div class="journal">ðŸ’¼<div>PostulÃ© a Anyone AI â€” Backend<small>hoy Â· 10:32</small></div></div>
+        <div class="journal">ðŸ—£ï¸<div>EstudiÃ© inglÃ©s 30 min â€” lecciÃ³n B1<small>hoy Â· 08:15</small></div></div>
+        <div class="journal">ðŸ’»<div>ConstruÃ­ DevTrack con Kotlin + Room<small>ayer Â· 21:40</small></div></div>
+        <div class="journal">ðŸ’ª<div>Entrenamiento completado: pechoðŸ”¥<small>ayer Â· 18:05</small></div></div>
+        <div class="fab">+</div>
+      </div>
+      <div class="nav"><div><i>ðŸ </i>Hoy</div><div><i>ðŸƒ</i>Aprender</div><div><i>ðŸ’ª</i>Entrena</div><div class="on"><i>ðŸ““</i>BitÃ¡cora</div><div><i>ðŸŽ¯</i>Metas</div><div><i>ðŸŽ™ï¸</i>Voz</div></div>
+    </div></div>
+    <div class="screen-label">ðŸ““ Registro por categorÃ­as â€” tu evidencia diaria</div>
+  </div>
+
+  <!-- 6. VOZ -->
+  <div>
+    <div class="phone"><div class="screen">
+      <div class="status"><span>9:41</span><span>ðŸ“¶ ðŸ”‹</span></div>
+      <div class="content" style="text-align:center;">
+        <div class="h">ðŸŽ™ï¸ Asistente</div>
+        <div class="sub">Toca el micrÃ³fono y habla</div>
+        <div class="mic">ðŸŽ¤</div>
+        <div class="cardbox" style="flex:0 0 auto;font-size:.85rem;">EntendÃ­: "postulÃ© a Anyone AI"<br><span class="accent">â†’ Registrado en tu bitÃ¡cora âœ…</span></div>
+        <div class="btn p">ðŸ”¥ MotÃ­vame (voz alta)</div>
+        <div class="btn o">ðŸŽµ Abrir Spotify â€” workout mix</div>
+        <div class="sub" style="text-align:left;line-height:1.7;font-size:.72rem;">"agregar tareaâ€¦" Â· "estudiÃ© inglÃ©sâ€¦" Â· "abre repaso" Â· "quÃ© tengo hoy" Â· "pon mÃºsica"</div>
+      </div>
+      <div class="nav"><div><i>ðŸ </i>Hoy</div><div><i>ðŸƒ</i>Aprender</div><div><i>ðŸ’ª</i>Entrena</div><div><i>ðŸ““</i>BitÃ¡cora</div><div><i>ðŸŽ¯</i>Metas</div><div class="on"><i>ðŸŽ™ï¸</i>Voz</div></div>
+    </div></div>
+    <div class="screen-label">ðŸŽ™ï¸ Voz offline + frases motivadoras + Spotify</div>
+  </div>
+
+</div>
+
+<footer>
+  DevTrack v1.0 Â· hecha con ðŸ’š en Cuenca, Ecuador Â· Kotlin + Material 3 + Room<br>
+  <span style="font-size:.75rem">Esto es una maqueta visual â€” la app real estÃ¡ en Android Studio</span>
+</footer>
+
+</body>
+</html>
+

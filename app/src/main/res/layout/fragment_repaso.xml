@@ -8,13 +8,15 @@
     android:background="@color/bg"
     android:padding="20dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="🃏 Aprender"
-        android:textColor="@color/text"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="APRENDER"
+            android:textAllCaps="true"
+            android:letterSpacing="0.18"
+            android:textColor="@color/text"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
     <Spinner
         android:id="@+id/spinnerDeck"
@@ -71,8 +73,8 @@
             android:layout_weight="1"
             android:layout_marginVertical="12dp"
             app:cardBackgroundColor="@color/card"
-            app:cardCornerRadius="18dp"
-            app:strokeColor="@color/primary"
+            app:cardCornerRadius="22dp"
+            app:strokeColor="@color/cardBorder"
             app:strokeWidth="1dp">
 
             <TextView

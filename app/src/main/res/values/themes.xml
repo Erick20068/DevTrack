@@ -2,7 +2,7 @@
 <resources>
     <style name="Theme.DevTrack" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
-        <item name="colorOnPrimary">@color/bg</item>
+        <item name="colorOnPrimary">#14100A</item>
         <item name="colorSecondary">@color/secondary</item>
         <item name="android:colorBackground">@color/bg</item>
         <item name="colorSurface">@color/surface</item>
