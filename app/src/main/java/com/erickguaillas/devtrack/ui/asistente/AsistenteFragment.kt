@@ -48,10 +48,7 @@ class AsistenteFragment : Fragment(R.layout.fragment_asistente) {
         repo = DevRepository(requireContext())
 
         tts = TextToSpeech(requireContext()) { status ->
-            if (status == TextToSpeech.SUCCESS) {
-                tts?.language = Locale("es", "ES")
-                tts?.setPitch(1.05f)
-            }
+            if (status == TextToSpeech.SUCCESS) tts?.let { configureVoice(it) }
         }
 
         b.btnMic.setOnClickListener {
@@ -213,7 +210,26 @@ class AsistenteFragment : Fragment(R.layout.fragment_asistente) {
     // ─── Motivación + AC/DC 🔥 ───
     private fun motivate() {
         speak(Wellness.randomMotivacion())
-        Handler(Looper.getMainLooper()).postDelayed({ openSpotify("AC/DC") }, 2800)
+        Handler(Looper.getMainLooper()).postDelayed({ openSpotify("AC/DC", autoPlay = true) }, 2600)
+    }
+
+    /** Voz lo más humana/grave posible (estilo Jarvis) con el TTS del sistema */
+    private fun configureVoice(t: TextToSpeech) {
+        try {
+            t.language = Locale("es", "US")
+            val spanishVoices = t.voices?.filter { it.locale.language == "es" } ?: emptyList()
+            // Heurística: voces masculinas suelen contener "esd", "male" o "-m-"
+            val male = spanishVoices.firstOrNull {
+                it.name.contains("esd", true) || it.name.contains("male", true) || it.name.contains("m-", true)
+            }
+            val chosen = male ?: spanishVoices.maxByOrNull { it.quality }
+            chosen?.let { t.voice = it }
+            t.setPitch(0.88f)      // más grave = más "Jarvis"
+            t.setSpeechRate(0.98f) // pausado y claro
+        } catch (_: Exception) {
+            t.language = Locale("es", "ES")
+            t.setPitch(0.9f)
+        }
     }
 
     private fun mediaWithPermission(block: () -> Unit) {
@@ -229,7 +245,7 @@ class AsistenteFragment : Fragment(R.layout.fragment_asistente) {
         } else block()
     }
 
-    private fun openSpotify(query: String) {
+    private fun openSpotify(query: String, autoPlay: Boolean = true) {
         try {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("spotify:search:${Uri.encode(query)}")).apply {
                 setPackage("com.spotify.android")
@@ -239,7 +255,17 @@ class AsistenteFragment : Fragment(R.layout.fragment_asistente) {
                 startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://open.spotify.com/search/${Uri.encode(query)}")))
             } catch (e2: ActivityNotFoundException) {
                 Toast.makeText(context, "Instala Spotify o abre tu app de música", Toast.LENGTH_LONG).show()
+                return
             }
+        }
+        // Intento de reproducción automática: espera a que Spotify abra y manda PLAY
+        if (autoPlay && SpotifyMedia.hasAccess(requireContext())) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                SpotifyMedia.play(requireContext())
+            }, 4000)
+            Handler(Looper.getMainLooper()).postDelayed({
+                SpotifyMedia.dispatch(requireContext(), android.view.KeyEvent.KEYCODE_MEDIA_PLAY)
+            }, 7000) // segundo intento por si la sesión tarda
         }
     }
 

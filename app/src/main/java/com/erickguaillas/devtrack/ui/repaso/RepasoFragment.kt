@@ -7,46 +7,54 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.erickguaillas.devtrack.R
 import com.erickguaillas.devtrack.data.Content
 import com.erickguaillas.devtrack.data.Deck
+import com.erickguaillas.devtrack.data.DevRepository
 import com.erickguaillas.devtrack.data.Quiz
 import com.erickguaillas.devtrack.databinding.FragmentRepasoBinding
+import kotlinx.coroutines.launch
 
 class RepasoFragment : Fragment(R.layout.fragment_repaso) {
 
     private var _b: FragmentRepasoBinding? = null
     private val b get() = _b!!
 
-    private var quizMode = false
+    private lateinit var repo: DevRepository
+    private var mode = 0 // 0 = flashcards, 1 = quiz, 2 = práctica
 
-    // Flashcards state
+    // Flashcards
     private var deck: Deck = Content.decks.first()
     private var order: List<Int> = deck.cards.indices.toList()
     private var index = 0
     private var showingFront = true
 
-    // Quiz state
+    // Quiz
     private var quiz: Quiz = Content.quizzes.first()
     private var qIndex = 0
     private var score = 0
     private var answered = false
 
+    // Práctica
+    private var practicePack = Content.practicePacks.first()
+    private lateinit var practiceAdapter: PracticeAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         _b = FragmentRepasoBinding.bind(view)
+        repo = DevRepository(requireContext())
 
-        b.btnModeCards.setOnClickListener { setMode(false) }
-        b.btnModeQuiz.setOnClickListener { setMode(true) }
+        b.btnModeCards.setOnClickListener { setMode(0) }
+        b.btnModeQuiz.setOnClickListener { setMode(1) }
+        b.btnModePractice.setOnClickListener { setMode(2) }
 
         b.spinnerDeck.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p: AdapterView<*>?, v: View?, position: Int, id: Long) {
-                if (quizMode) {
-                    quiz = Content.quizzes[position]
-                    startQuiz()
-                } else {
-                    deck = Content.decks[position]
-                    shuffleOrder()
-                    showCard()
+                when (mode) {
+                    0 -> { deck = Content.decks[position]; shuffleOrder(); showCard() }
+                    1 -> { quiz = Content.quizzes[position]; startQuiz() }
+                    2 -> { practicePack = Content.practicePacks[position]; bindPractice() }
                 }
             }
             override fun onNothingSelected(p: AdapterView<*>?) {}
@@ -61,20 +69,52 @@ class RepasoFragment : Fragment(R.layout.fragment_repaso) {
         optButtons.forEachIndexed { i, btn -> btn.setOnClickListener { answer(i) } }
         b.btnNextQ.setOnClickListener { nextQuestion() }
 
-        setMode(false)
+        // Práctica
+        practiceAdapter = PracticeAdapter { itemId ->
+            lifecycleScope.launch { repo.toggleCheck("practice", itemId) }
+        }
+        b.rvPractice.layoutManager = LinearLayoutManager(requireContext())
+        b.rvPractice.adapter = practiceAdapter
+
+        repo.checksForDay("practice").observe(viewLifecycleOwner) { checks ->
+            val done = checks.filter { it.done }.map { it.itemId }.toSet()
+            practiceAdapter.submit(practicePack.items, done)
+
+            val totalItems = practicePack.items
+            val doneHere = totalItems.count { done.contains(it.id) }
+            val doneAll = Content.practicePacks.sumOf { pack -> pack.items.count { done.contains(it.id) } }
+            b.tvPracticeProgress.text = "✍️ ${practicePack.label}: $doneHere/${totalItems.size} · " +
+                    "Total practicado: $doneAll/${Content.totalPractice}"
+        }
+
+        setMode(0)
+    }
+
+    private fun bindPractice() {
+        val done = repo.checksForDay("practice").value?.filter { it.done }?.map { it.itemId }?.toSet() ?: emptySet()
+        practiceAdapter.submit(practicePack.items, done)
     }
 
     // ─── Modo ───
-    private fun setMode(quiz: Boolean) {
-        quizMode = quiz
-        b.containerCards.visibility = if (quiz) View.GONE else View.VISIBLE
-        b.containerQuiz.visibility = if (quiz) View.VISIBLE else View.GONE
+    private fun setMode(newMode: Int) {
+        mode = newMode
+        b.containerCards.visibility = if (newMode == 0) View.VISIBLE else View.GONE
+        b.containerQuiz.visibility = if (newMode == 1) View.VISIBLE else View.GONE
+        b.containerPractice.visibility = if (newMode == 2) View.VISIBLE else View.GONE
 
-        val labels = if (quiz) Content.quizzes.map { it.label } else Content.decks.map { it.label }
+        val labels = when (newMode) {
+            0 -> Content.decks.map { it.label }
+            1 -> Content.quizzes.map { it.label }
+            else -> Content.practicePacks.map { it.label }
+        }
         b.spinnerDeck.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, labels)
         b.spinnerDeck.setSelection(0)
-        if (quiz) { this.quiz = Content.quizzes.first(); startQuiz() }
-        else { deck = Content.decks.first(); shuffleOrder(); showCard() }
+
+        when (newMode) {
+            0 -> { deck = Content.decks.first(); shuffleOrder(); showCard() }
+            1 -> { quiz = Content.quizzes.first(); startQuiz() }
+            else -> { practicePack = Content.practicePacks.first(); bindPractice() }
+        }
     }
 
     // ─── Flashcards ───
@@ -121,6 +161,7 @@ class RepasoFragment : Fragment(R.layout.fragment_repaso) {
 
         val buttons = listOf(b.btnOpt1, b.btnOpt2, b.btnOpt3, b.btnOpt4)
         buttons.forEachIndexed { i, btn ->
+            btn.visibility = View.VISIBLE
             btn.text = q.options[i]
             btn.alpha = 1f
             btn.isEnabled = true
@@ -134,7 +175,6 @@ class RepasoFragment : Fragment(R.layout.fragment_repaso) {
         val buttons = listOf(b.btnOpt1, b.btnOpt2, b.btnOpt3, b.btnOpt4)
 
         if (chosen == q.correctIndex) score++
-        buttons[q.correctIndex].alpha = 1f
         buttons.forEachIndexed { i, btn ->
             btn.alpha = when {
                 i == q.correctIndex -> 1f
@@ -167,7 +207,6 @@ class RepasoFragment : Fragment(R.layout.fragment_repaso) {
             b.btnNextQ.text = "Reiniciar quiz 🔄"
             b.btnNextQ.visibility = View.VISIBLE
             b.btnNextQ.setOnClickListener {
-                listOf(b.btnOpt1, b.btnOpt2, b.btnOpt3, b.btnOpt4).forEach { it.visibility = View.VISIBLE }
                 b.btnNextQ.setOnClickListener { nextQuestion() }
                 startQuiz()
             }

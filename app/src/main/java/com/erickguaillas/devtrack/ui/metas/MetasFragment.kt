@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.erickguaillas.devtrack.R
 import com.erickguaillas.devtrack.data.DevRepository
+import com.erickguaillas.devtrack.data.Finance
 import com.erickguaillas.devtrack.databinding.DialogFormBinding
 import com.erickguaillas.devtrack.databinding.FragmentMetasBinding
 import kotlinx.coroutines.launch
@@ -33,6 +34,11 @@ class MetasFragment : Fragment(R.layout.fragment_metas) {
             adapter.submit(list)
             b.tvEmpty.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
         }
+
+        // 💰 Consejo financiero del día
+        val lesson = Finance.lessonOfTheDay()
+        b.tvFinanceTitle.text = "💰 Hoy: ${lesson.title}"
+        b.tvFinanceBody.text = lesson.body
 
         b.fabAddGoal.setOnClickListener { showAddDialog() }
     }

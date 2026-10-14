@@ -9,12 +9,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [Task::class, JournalEntry::class, Goal::class], version = 1, exportSchema = false)
+@Database(entities = [Task::class, JournalEntry::class, Goal::class, Check::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun taskDao(): TaskDao
     abstract fun journalDao(): JournalDao
     abstract fun goalDao(): GoalDao
+    abstract fun checkDao(): CheckDao
 
     companion object {
         @Volatile

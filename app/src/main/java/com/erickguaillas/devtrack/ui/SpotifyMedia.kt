@@ -50,4 +50,5 @@ object SpotifyMedia {
     fun next(context: Context) = dispatch(context, KeyEvent.KEYCODE_MEDIA_NEXT)
     fun prev(context: Context) = dispatch(context, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
     fun playPause(context: Context) = dispatch(context, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
+    fun play(context: Context) = dispatch(context, KeyEvent.KEYCODE_MEDIA_PLAY)
 }

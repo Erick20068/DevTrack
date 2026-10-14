@@ -27,3 +27,12 @@ data class Goal(
     val progress: Int = 0, // 0..100
     val createdAt: Long = System.currentTimeMillis()
 )
+
+/** Marca de elementos completados por día: ejercicios de entrenamiento, tips, práctica */
+@Entity(tableName = "checks")
+data class Check(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val dayKey: String,   // "2026-10-14" o "practice" (global)
+    val itemId: String,   // "routine_0", "tip_3", "practice_git_1"
+    val done: Boolean = true
+)

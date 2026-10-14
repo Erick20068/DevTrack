@@ -12,6 +12,44 @@ class DevRepository(context: Context) {
     val journal: LiveData<List<JournalEntry>> = db.journalDao().all()
     val goals: LiveData<List<Goal>> = db.goalDao().all()
 
+    fun checksForDay(dayKey: String): LiveData<List<Check>> = db.checkDao().forDay(dayKey)
+
+    fun todayKey(): String {
+        val c = java.util.Calendar.getInstance()
+        return "%04d-%02d-%02d".format(
+            c.get(java.util.Calendar.YEAR),
+            c.get(java.util.Calendar.MONTH) + 1,
+            c.get(java.util.Calendar.DAY_OF_MONTH)
+        )
+    }
+
+    /** Marca/desmarca un elemento de checklist (entrenamiento, tips, práctica) */
+    suspend fun toggleCheck(dayKey: String, itemId: String) {
+        val existing = db.checkDao().find(dayKey, itemId)
+        if (existing == null) db.checkDao().insert(Check(dayKey = dayKey, itemId = itemId, done = true))
+        else db.checkDao().update(existing.copy(done = !existing.done))
+    }
+
+    suspend fun deleteJournal(id: Long) = db.journalDao().delete(id)
+
+    suspend fun journalStats(): Triple<Int, Int, Int> {
+        val all = db.journalDao().allNow()
+        val todayKey = todayKey()
+        val weekAgo = System.currentTimeMillis() - 7L * 24 * 60 * 60 * 1000
+        val today = all.count {
+            val c = java.util.Calendar.getInstance().apply { timeInMillis = it.timestamp }
+            "%04d-%02d-%02d".format(c.get(java.util.Calendar.YEAR), c.get(java.util.Calendar.MONTH) + 1, c.get(java.util.Calendar.DAY_OF_MONTH)) == todayKey
+        }
+        val week = all.count { it.timestamp >= weekAgo }
+        return Triple(today, week, all.size)
+    }
+
+    suspend fun weekSummaryText(): String {
+        val all = db.journalDao().allNow().take(20)
+        if (all.isEmpty()) return "Bitácora vacía"
+        return all.joinToString("; ") { "${it.category}: ${it.text}" }
+    }
+
     suspend fun addTask(title: String) = db.taskDao().insert(Task(title = title))
 
     suspend fun toggleTask(task: Task) = db.taskDao().update(

@@ -34,6 +34,30 @@ interface JournalDao {
 
     @Insert
     suspend fun insert(entry: JournalEntry): Long
+
+    @Query("DELETE FROM journal_entries WHERE id = :id")
+    suspend fun delete(id: Long)
+
+    @Query("SELECT * FROM journal_entries ORDER BY timestamp DESC")
+    suspend fun allNow(): List<JournalEntry>
+}
+
+@Dao
+interface CheckDao {
+    @Query("SELECT * FROM checks WHERE dayKey = :day")
+    fun forDay(day: String): LiveData<List<Check>>
+
+    @Query("SELECT * FROM checks WHERE dayKey = :day")
+    suspend fun forDayNow(day: String): List<Check>
+
+    @Query("SELECT * FROM checks WHERE dayKey = :day AND itemId = :itemId LIMIT 1")
+    suspend fun find(day: String, itemId: String): Check?
+
+    @Insert
+    suspend fun insert(check: Check): Long
+
+    @Update
+    suspend fun update(check: Check)
 }
 
 @Dao

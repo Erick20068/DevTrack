@@ -201,6 +201,56 @@ object Content {
             Flashcard("to streamline", "optimizar/agilizar — CI/CD streamlines our deployments."),
             Flashcard("compelling", "convincente — Make your portfolio compelling."),
             Flashcard("endeavor", "emprendimiento/esfuerzo — Learning English is a worthy endeavor.")
+        )),
+
+        Deck("APIs & HTTP", "🔌", listOf(
+            Flashcard("¿Qué es una API?", "Interfaz que permite que dos programas se comuniquen: tú pides (request), ella responde (response). Como un mesero entre tu app y la cocina (el servidor)."),
+            Flashcard("Métodos HTTP", "GET (leer), POST (crear), PUT/PATCH (actualizar), DELETE (borrar). Son las 4 acciones base de una API REST."),
+            Flashcard("Códigos de estado", "200 OK · 201 Creado · 400 Petición inválida · 401 No autorizado · 403 Prohibido · 404 No encontrado · 500 Error del servidor."),
+            Flashcard("¿Qué es REST?", "Estilo de API sobre HTTP: recursos con URL (ej. /usuarios/5), sin estado, y usa los métodos HTTP para operar."),
+            Flashcard("JSON", "Formato de intercambio de datos: {\"nombre\": \"Erick\", \"edad\": 20}. Es el idioma que hablan casi todas las APIs."),
+            Flashcard("Headers y Body", "Headers: metadatos (Authorization, Content-Type). Body: los datos que envías (ej. el JSON del nuevo usuario)."),
+            Flashcard("¿Qué es un token JWT?", "Credencial firmada que el servidor entrega al hacer login; el cliente la manda en cada petición para autenticarse."),
+            Flashcard("REST vs GraphQL", "REST: varios endpoints, cada uno devuelve una estructura fija. GraphQL: un solo endpoint y pides exactamente los campos que necesitas.")
+        )),
+
+        Deck("Docker", "🐳", listOf(
+            Flashcard("¿Qué es Docker?", "Empaqueta tu app con TODAS sus dependencias en un contenedor: funciona igual en tu PC, en el servidor y en el de tu compañero."),
+            Flashcard("Contenedor vs máquina virtual", "El contenedor comparte el kernel del SO (liviano, arranca en segundos). La VM virtualiza hardware entero (pesada)."),
+            Flashcard("¿Qué es una imagen?", "La plantilla de solo lectura para crear contenedores (como la clase). El contenedor es la instancia en ejecución."),
+            Flashcard("Dockerfile", "Archivo de receta: FROM (base) → COPY (código) → RUN (instalar) → CMD (comando de arranque)."),
+            Flashcard("docker compose", "Orquesta varios contenedores a la vez (app + base de datos) con un solo archivo YAML y un `docker compose up`."),
+            Flashcard("Volúmenes", "Almacenamiento que sobrevive al contenedor: sin él, la base de datos se borra al reiniciar.")
+        )),
+
+        Deck("Algoritmos", "🧮", listOf(
+            Flashcard("Big-O notation", "Mide cómo crece el tiempo según la entrada: O(1) constante, O(log n) búsqueda binaria, O(n) un bucle, O(n²) doble bucle. Menos es mejor."),
+            Flashcard("Búsqueda binaria", "Buscar en una lista ORDENADA partiendo a la mitad cada vez: O(log n). Si hay 1.000 elementos, encuentra en ~10 pasos."),
+            Flashcard("Ordenamiento rápido (concepto)", "QuickSort: elige un pivote, divide menores/mayores y ordena recursivamente. Promedio O(n log n)."),
+            Flashcard("Recursividad", "Una función que se llama a sí misma con un caso base que la detiene. Ej: factorial(3) = 3 * factorial(2)."),
+            Flashcard("FIFO vs LIFO", "Cola (FIFO): el primero que entra sale primero. Pila (LIFO): el último que entra sale primero (como deshacer Ctrl+Z)."),
+            Flashcard("Hash map (diccionario)", "Estructura clave→valor con búsqueda O(1) promedio: HashMap en Java, dict en Python, objeto en JS."),
+            Flashcard("Complejidad espacial", "Cuánta memoria extra usa el algoritmo. A veces sacrificas memoria para ganar velocidad (y viceversa).")
+        )),
+
+        Deck("Redes & Web", "🌍", listOf(
+            Flashcard("¿Qué pasa al escribir una URL?", "DNS traduce el dominio a IP → conexión TCP → handshake TLS (HTTPS) → petición HTTP → el servidor responde el HTML → el navegador lo renderiza."),
+            Flashcard("DNS", "El 'directorio telefónico' de internet: convierte google.com en 142.250.0.1."),
+            Flashcard("HTTP vs HTTPS", "HTTPS es HTTP cifrado con TLS: nadie en el camino puede leer ni alterar los datos. SIEMPRE usa HTTPS."),
+            Flashcard("Cliente vs servidor", "El cliente (tu app/navegador) pide; el servidor procesa y responde. Tú ya hiciste los dos en MovilDilo."),
+            Flashcard("hosting y despliegue", "Publicar tu app en un servidor: Railway, Render, Vercel (free tier) → tu API deja de vivir en tu PC."),
+            Flashcard("Puertos", "80 = HTTP, 443 = HTTPS, 3306 = MySQL, 8080 = servidor de desarrollo. Como puertas numeradas del mismo edificio.")
+        )),
+
+        Deck("Phrasal verbs 🇬🇧", "🧩", listOf(
+            Flashcard("to give up", "rendirse — Never give up on your dreams. (Nunca te rindas)"),
+            Flashcard("to keep on", "seguir, continuar — Keep on practicing every day."),
+            Flashcard("to look for", "buscar — I'm looking for a job."),
+            Flashcard("to find out", "descubrir, averiguar — I found out how the bug happened."),
+            Flashcard("to run out of", "quedarse sin — We ran out of time in the sprint."),
+            Flashcard("to set up", "configurar, montar — I set up my dev environment."),
+            Flashcard("to work out", "funcionar / hacer ejercicio — My code works out now. / I work out every day."),
+            Flashcard("to deal with", "lidiar con — Devs deal with bugs every day.")
         ))
     )
 
@@ -369,6 +419,241 @@ object Content {
             QuizQuestion("Completa: \"I wish I ___ more about Kubernetes.\"",
                 listOf("know", "knew", "had known", "would know"), 1,
                 "I wish + pasado = deseo sobre el presente.")
+        )),
+
+        Quiz("Quiz APIs & HTTP 🔌", "🔌", listOf(
+            QuizQuestion("¿Qué método HTTP se usa para CREAR un recurso?",
+                listOf("GET", "POST", "PATCH", "HEAD"), 1,
+                "POST crea. GET lee, PUT/PATCH actualizan, DELETE borra."),
+            QuizQuestion("¿Qué significa el código 401?",
+                listOf("No encontrado", "No autorizado", "Error del servidor", "Creado"), 1,
+                "401 = no autenticado. 403 = autenticado pero sin permiso."),
+            QuizQuestion("¿Para qué sirve un token JWT?",
+                listOf("Comprimir respuestas", "Autenticar al usuario en cada petición", "Guardar imágenes", "Encriptar la base de datos"), 1,
+                "Se envía en el header Authorization: Bearer <token>."),
+            QuizQuestion("Una API REST usa principalmente...",
+                listOf("Solo POST", "Recursos con URL + métodos HTTP", "Archivos CSV", "Sockets binarios"), 1,
+                "Ej: GET /usuarios/5 — el recurso es la URL, la acción es el método."),
+            QuizQuestion("¿Qué formato de datos devuelven casi todas las APIs?",
+                listOf("PDF", "XML obligatorio", "JSON casi siempre", "CSV"), 2,
+                "JSON {clave: valor} es el estándar de facto.")
+        )),
+
+        Quiz("Quiz Git 🌿", "🌿", listOf(
+            QuizQuestion("¿Qué comando deshace el último commit MANTENIENDO los cambios?",
+                listOf("git reset --hard HEAD~1", "git reset --soft HEAD~1", "git delete last", "git undo"), 1,
+                "--soft quita el commit y deja los cambios en staging. --hard los borra."),
+            QuizQuestion("¿Qué hace `git branch -M main`?",
+                listOf("Crea una rama llamada M", "Renombra la rama actual a main", "Borra main", "Sube a main"), 1,
+                "-M renombra forzando (la rama por defecto pasó de master a main)."),
+            QuizQuestion("Quieres traer los cambios del remoto y fusionarlos:",
+                listOf("git push", "git pull", "git commit", "git clone"), 1,
+                "git pull = git fetch + git merge."),
+            QuizQuestion("¿Dónde vive el archivo que EXCLUYE cosas del repo?",
+                listOf("git.config", ".gitignore", "exclude.txt", "README.md"), 1,
+                ".gitignore: contraseñas, build/, node_modules."),
+            QuizQuestion("Acabas de escribir código y quieres ver qué cambió:",
+                listOf("git log", "git status", "git push", "git init"), 1,
+                "git status muestra archivos modificados/nuevos.")
+        )),
+
+        Quiz("Quiz Algoritmos 🧮", "🧮", listOf(
+            QuizQuestion("La búsqueda binaria requiere que la lista esté...",
+                listOf("Vacía", "Ordenada", "Sin duplicados", "En JSON"), 1,
+                "Solo así puedes descartar la mitad en cada paso: O(log n)."),
+            QuizQuestion("¿Qué complejidad tiene un doble bucle sobre n elementos?",
+                listOf("O(1)", "O(n)", "O(n²)", "O(log n)"), 2,
+                "Por cada elemento recorres todos los demás: n × n."),
+            QuizQuestion("Una pila (stack) es...",
+                listOf("FIFO", "LIFO", "Aleatoria", "Ordenada"), 1,
+                "LIFO: el último en entrar es el primero en salir (Ctrl+Z)."),
+            QuizQuestion("¿Qué agrega un 'caso base' en una función recursiva?",
+                listOf("Más memoria", "La condición que detiene la recursión", "Un bucle infinito", "Velocidad"), 1,
+                "Sin caso base, la recursión nunca termina (StackOverflow)."),
+            QuizQuestion("Buscar una clave en un HashMap tiene complejidad:",
+                listOf("O(n)", "O(log n)", "O(1) promedio", "O(n²)"), 2,
+                "Por eso los diccionarios/objetos son tan rápidos para buscar.")
+        )),
+
+        Quiz("Quiz Verbos irregulares 🇬🇧", "📚", listOf(
+            QuizQuestion("go → went → ...",
+                listOf("goed", "gone", "going", "went"), 1,
+                "go / went / GONE (participio para have gone)."),
+            QuizQuestion("¿Cómo se dice 'yo hice' (do en pasado)?",
+                listOf("doed", "did", "done", "doing"), 1,
+                "do / did / done. 'I did my homework.'"),
+            QuizQuestion("Él tomó el bus (take):",
+                listOf("He taked the bus", "He took the bus", "He taken the bus", "He taking the bus"), 1,
+                "take / took / taken."),
+            QuizQuestion("¿Qué verbo NO es irregular?",
+                listOf("eat", "write", "work", "sing"), 2,
+                "work → worked (regular). Los demás tienen forma propia: ate, wrote, sang."),
+            QuizQuestion("Ella compró un libro (buy):",
+                listOf("She buyed a book", "She bought a book", "She buy a book", "She boughting"), 1,
+                "buy / bought / bought.")
         ))
     )
+
+    // ─── PRÁCTICA: problemas reales de código + ejercicios de inglés ───
+    data class PracticeItem(
+        val id: String,
+        val prompt: String,
+        val hint: String,
+        val solution: String
+    )
+
+    data class PracticePack(val title: String, val emoji: String, val items: List<PracticeItem>) {
+        val label get() = "$emoji $title"
+    }
+
+    val practicePacks: List<PracticePack> = listOf(
+
+        PracticePack("Práctica · Git", "🌿", listOf(
+            PracticeItem("p_git_1",
+                "Clona un repositorio de GitHub y muéstrame los comandos en orden.",
+                "Necesitas la URL del repo (botón verde Code → HTTPS).",
+                "git clone https://github.com/Erick20068/DevTrack.git\ncd DevTrack\ngit log --oneline   # ver el historial"),
+            PracticeItem("p_git_2",
+                "Crea una rama llamada 'feature/login', haz un cambio y súbela al remoto.",
+                "Después de commitear, el primer push de una rama nueva necesita -u.",
+                "git switch -c feature/login\ngit add .\ngit commit -m \"feat: pantalla login\"\ngit push -u origin feature/login"),
+            PracticeItem("p_git_3",
+                "Hiciste un commit con un mensaje equivocado. ¿Cómo lo corriges sin crear otro commit?",
+                "Puedes editar el último commit con --amend (solo si no lo has subido).",
+                "git commit --amend -m \"mensaje correcto\""),
+            PracticeItem("p_git_4",
+                "Revisa la diferencia entre tu working directory y el último commit.",
+                "El comando clásico para ver diferencias es git diff.",
+                "git diff          # cambios sin preparar\ngit diff --staged # cambios ya en staging"),
+            PracticeItem("p_git_5",
+                "Únete a un repo existente de tu equipo sin copiar todo de nuevo.",
+                "Necesitas traer el remoto y luego hacer pull.",
+                "git remote add origin <url>\ngit pull origin main")
+        )),
+
+        PracticePack("Práctica · APIs", "🔌", listOf(
+            PracticeItem("p_api_1",
+                "Explica con tus palabras qué es una API REST y da un ejemplo de endpoint.",
+                "Piensa en recursos, URLs y métodos HTTP.",
+                "Una API REST expone recursos en URLs y permite operar con métodos HTTP.\nEj: GET /productos → lista productos. POST /productos → crea uno.\nEn MovilDilo tu API tenía endpoints así para inventario y ventas."),
+            PracticeItem("p_api_2",
+                "¿Qué diferencia hay entre 401 y 403? Escribe un caso de cada uno.",
+                "Uno es 'no sé quién eres', el otro es 'sé quién eres pero no puedes'.",
+                "401 Unauthorized: token ausente o inválido (no estás autenticado).\n403 Forbidden: autenticado pero sin permiso (ej: un bodeguero intentando borrar usuarios)."),
+            PracticeItem("p_api_3",
+                "Diseña en texto los endpoints para un sistema de tareas.",
+                "Piensa CRUD: crear, listar, actualizar, borrar.",
+                "GET    /tareas          → listar\nGET    /tareas/{id}     → detalle\nPOST   /tareas          → crear\nPUT    /tareas/{id}     → actualizar\nDELETE /tareas/{id}     → eliminar\nHeader: Authorization: Bearer <token>"),
+            PracticeItem("p_api_4",
+                "¿Qué le mandarías al servidor para crear un usuario? Escribe el JSON.",
+                "Campos mínimos + no envíes la contraseña en texto plano al log.",
+                "POST /usuarios\n{\n  \"nombre\": \"Erick\",\n  \"email\": \"erick@mail.com\",\n  \"password\": \"(se hashea en el servidor)\"\n}")
+        )),
+
+        PracticePack("Práctica · Java & Kotlin", "☕", listOf(
+            PracticeItem("p_java_1",
+                "Escribe una función que invierta un String SIN usar reverse().",
+                "Recorre desde el último carácter hasta el primero.",
+                "fun invertir(s: String): String {\n    val sb = StringBuilder()\n    for (i in s.length - 1 downTo 0) sb.append(s[i])\n    return sb.toString()\n}"),
+            PracticeItem("p_java_2",
+                "¿Qué diferencia hay entre == y .equals() en Java? Da un ejemplo.",
+                "Uno compara referencias, el otro contenido.",
+                "== compara si son el MISMO objeto en memoria.\n.equals() compara el contenido.\nString a = new String(\"hi\"); String b = new String(\"hi\");\na == b → false ; a.equals(b) → true"),
+            PracticeItem("p_kotlin_1",
+                "Escribe una data class Usuario con nombre y email, y crea una copia con otro nombre.",
+                "data class + .copy()",
+                "data class Usuario(val nombre: String, val email: String)\n\nval u1 = Usuario(\"Erick\", \"e@mail.com\")\nval u2 = u1.copy(nombre = \"Santiago\")"),
+            PracticeItem("p_kotlin_2",
+                "Filtra una lista de números y quédate solo con los pares, sumándoles 10.",
+                "Combina filter y map.",
+                "val nums = listOf(1, 2, 3, 4, 5, 6)\nval paresMas10 = nums.filter { it % 2 == 0 }.map { it + 10 }\n// [12, 14, 16]"),
+            PracticeItem("p_java_3",
+                "¿Qué es NullPointerException y cómo lo evitas en Kotlin?",
+                "Kotlin tiene un sistema de tipos que distingue nullable de no-nullable.",
+                "NPE: intentar usar una referencia null (usar .length de un String null).\nEn Kotlin: marca nullable con ? (String?), usa ?. para llamadas seguras, ?: para valor por defecto, y !! solo si estás 100% seguro.")
+        )),
+
+        PracticePack("Práctica · SQL & Datos", "🗄️", listOf(
+            PracticeItem("p_sql_1",
+                "Escribe la consulta: los 5 productos más caros.",
+                "ORDER BY + DESC + LIMIT.",
+                "SELECT * FROM productos\nORDER BY precio DESC\nLIMIT 5;"),
+            PracticeItem("p_sql_2",
+                "Lista los clientes SIN ventas registradas.",
+                "Piensa en LEFT JOIN con IS NULL, o NOT IN.",
+                "SELECT c.* FROM clientes c\nLEFT JOIN ventas v ON v.cliente_id = c.id\nWHERE v.id IS NULL;"),
+            PracticeItem("p_sql_3",
+                "Total vendido por cada cliente, solo los que superan $1000.",
+                "GROUP BY + SUM + HAVING (no WHERE).",
+                "SELECT cliente_id, SUM(total) AS total\nFROM ventas\nGROUP BY cliente_id\nHAVING SUM(total) > 1000;")
+        )),
+
+        PracticePack("Práctica · Python & JS", "🐍", listOf(
+            PracticeItem("p_py_1",
+                "Cuenta cuántas veces aparece cada palabra en una frase (Python).",
+                "Un diccionario + split().",
+                "frase = \"hola mundo hola\"\nconteo = {}\nfor palabra in frase.split():\n    conteo[palabra] = conteo.get(palabra, 0) + 1\nprint(conteo)  # {'hola': 2, 'mundo': 1}"),
+            PracticeItem("p_js_1",
+                "Escribe una función JS que reciba un array y devuelva solo los mayores de 18.",
+                "Array.prototype.filter",
+                "const adultos = (edades) => edades.filter(e => e > 18);\n\nadultos([12, 20, 18, 25]); // [20, 25]"),
+            PracticeItem("p_py_2",
+                "¿Qué es un decorador en Python? Da un ejemplo simple.",
+                "Una función que envuelve a otra para añadir comportamiento.",
+                "def loguear(f):\n    def wrapper(*args):\n        print(\"Ejecutando...\")\n        return f(*args)\n    return wrapper\n\n@loguear\ndef saludar(nombre):\n    print(f\"Hola {nombre}\")"),
+            PracticeItem("p_js_2",
+                "¿Qué es el DOM y cómo cambias el texto de un elemento?",
+                "document.getElementById / querySelector.",
+                "El DOM es el árbol de objetos que representa el HTML.\nconst titulo = document.querySelector('#titulo');\ntitulo.textContent = 'Nuevo texto';")
+        )),
+
+        PracticePack("Práctica · Inglés: escritura", "✍️", listOf(
+            PracticeItem("p_en_w1",
+                "Escribe 3 oraciones presentándote como desarrollador (en inglés).",
+                "Usa: I'm / I work with / I'm looking for.",
+                "Hi, I'm Erick. I'm a junior software developer from Ecuador.\nI work with Java, Kotlin and Spring Boot.\nI'm looking for my first remote job where I can grow."),
+            PracticeItem("p_en_w2",
+                "Describe tu proyecto más importante en 40 palabras (inglés).",
+                "Estructura: qué es → qué tecnología → qué problema resuelve.",
+                "I built an Android app called MovilDilo to manage inventory and sales for small businesses. It uses Kotlin, a Spring Boot REST API, MySQL and even an AI voice assistant. It helped shop owners track their stock in real time."),
+            PracticeItem("p_en_w3",
+                "Escribe un email corto respondiendo a 'Tell us about yourself'.",
+                "Saludo + experiencia + motivación + cierre.",
+                "Dear hiring team,\nI am a junior software developer from Ecuador with strong Java and Kotlin skills. I have built a complete inventory system with a REST API and AI integration. I am eager to learn and contribute to your team.\nBest regards,\nErick Guaillas"),
+            PracticeItem("p_en_w4",
+                "Traduce: 'Ayer postulé a cinco trabajos y hoy practiqué inglés por una hora.'",
+                "Pasado simple: applied / practiced.",
+                "Yesterday I applied to five jobs and today I practiced English for one hour."),
+            PracticeItem("p_en_w5",
+                "Escribe 3 preguntas que harías en una entrevista técnica (inglés).",
+                "Empieza con: What / How / Could.",
+                "What does a typical day look like for a junior developer here?\nHow do you measure success in the first three months?\nCould you tell me more about the team and the tech stack?")
+        )),
+
+        PracticePack("Práctica · Inglés: lectura & pronunciación", "🎧", listOf(
+            PracticeItem("p_en_r1",
+                "LEE en voz alta y responde: 'Remote work changed my life. I wake up early, study English for an hour, then apply to jobs online. In the afternoon, I build my app. It is hard but exciting.' — ¿Qué hace en la mañana?",
+                "Busca las actividades después de 'I'.",
+                "Se levanta temprano, estudia inglés una hora y postula a trabajos online.\nPronunciación: 'early' = /ér-li/ (no 'erli'), 'exciting' = /ek-sáitin/."),
+            PracticeItem("p_en_r2",
+                "LEE y responde: 'A good developer does not know everything. A good developer knows how to find the answer, ask good questions and keep learning every day.' — ¿Qué distingue a un buen dev?",
+                "No es saberse todo.",
+                "No saberlo todo, sino saber buscar respuestas, hacer buenas preguntas y aprender cada día."),
+            PracticeItem("p_en_p1",
+                "Pronunciación: repite 5 veces 'I would like to improve my English skills.'",
+                "would like = /wud láik/. Una los sonidos sin pausas.",
+                "Enfócate en:\n• 'would' (la 'l' es muda): /wud/\n• 'improve': /im-prúuv/\n• 'skills': la 'k' suena /skils/"),
+            PracticeItem("p_en_p2",
+                "Pronuncia estas palabras de programación: 'queue', 'suite', 'chaos', 'integer'.",
+                "Ojo: varias NO se pronuncian como se escriben.",
+                "queue = /kiú/ · suite = /suít/ · chaos = /kéos/ · integer = /ín-te-yer/\nTruco: escúchalas en Google Translate y repite en voz alta 3 veces."),
+            PracticeItem("p_en_r3",
+                "LEE y tradúcelo al español: 'Technical interviews test how you think, not just what you know. Explain your reasoning out loud.'",
+                "reasoning = razonamiento.",
+                "Las entrevistas técnicas evalúan cómo piensas, no solo lo que sabes. Explica tu razonamiento en voz alta.")
+        ))
+    )
+
+    /** Total de ejercicios de práctica (para progreso global) */
+    val totalPractice: Int get() = practicePacks.sumOf { it.items.size }
 }

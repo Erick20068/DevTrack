@@ -121,7 +121,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
-            android:text="Comandos que entiendo:\n\n• «Agregar tarea repasar Java»\n• «Postulé a Anyone AI»\n• «Estudié inglés 30 minutos»\n• «Estuve programando 2 horas»\n• «Entrené pierna hoy»\n• «Abre repaso / metas / entrena»\n• «Qué tengo hoy»\n• «Motívame» (frase + AC/DC 🔥)\n• «Pon AC/DC» o cualquier artista\n• «Siguiente canción» · «Pausa» · «Dale play»\n\n🧠 Con Groq activa también puedes preguntarme LO QUE SEA: dudas de la app, de programación, de tu plan… yo conozco tus tareas y metas."
+            android:text="Comandos que entiendo:\n\n• «Agregar tarea repasar Java»\n• «Postulé a Anyone AI»\n• «Estudié inglés 30 minutos»\n• «Estuve programando 2 horas»\n• «Entrené pierna hoy»\n• «Abre repaso / metas / entrena / bitácora»\n• «Qué tengo hoy»\n• «Motívame» (frase + AC/DC 🔥 con play)\n• «Pon AC/DC» o cualquier artista\n• «Siguiente canción» · «Pausa» · «Dale play»\n\n🧠 Con Groq también respondo LO QUE SEA: dudas de la app, programación, inglés y DINERO 💰 (mentor financiero: presupuestos, ahorro, deudas, estafas). Conozco tus tareas, metas y tu bitácora."
             android:textColor="@color/textDim"
             android:textSize="13sp"
             android:lineSpacingMultiplier="1.4" />

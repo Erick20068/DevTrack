@@ -35,9 +35,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginEnd="6dp"
+            android:layout_marginEnd="4dp"
             app:backgroundTint="@color/primary"
             android:textColor="@color/bg"
+            android:textSize="12sp"
             android:text="🃏 Flashcards" />
 
         <com.google.android.material.button.MaterialButton
@@ -45,9 +46,21 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginEnd="4dp"
             app:backgroundTint="@color/secondary"
             android:textColor="@color/bg"
+            android:textSize="12sp"
             android:text="✅ Quiz" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnModePractice"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/text"
+            android:textSize="12sp"
+            android:text="✍️ Práctica" />
     </LinearLayout>
 
     <!-- ══ MODO FLASHCARDS ══ -->
@@ -217,5 +230,30 @@
             android:textColor="@color/bg"
             android:visibility="gone"
             android:text="Siguiente ➜" />
+    </LinearLayout>
+
+    <!-- ══ MODO PRÁCTICA ══ -->
+    <LinearLayout
+        android:id="@+id/containerPractice"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvPracticeProgress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/textDim"
+            android:textSize="13sp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPractice"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp" />
     </LinearLayout>
 </LinearLayout>

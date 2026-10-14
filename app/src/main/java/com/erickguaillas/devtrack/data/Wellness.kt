@@ -60,6 +60,14 @@ object Wellness {
 
     fun todayRoutine(): Routine = routines[Calendar.getInstance().get(Calendar.DAY_OF_WEEK) - 1]
 
+    /** Ejercicios del día como checklist (id estable + texto) */
+    fun routineItems(): List<Pair<String, String>> =
+        todayRoutine().exercises.mapIndexed { i, e -> "routine_$i" to e }
+
+    /** Tips de cuidado corporal como checklist */
+    fun tipItems(): List<Pair<String, String>> =
+        bodyCareTips.mapIndexed { i, t -> "tip_$i" to t }
+
     val bodyCareTips = listOf(
         "💧 2 litros de agua al día — tu cerebro rinde más hidratado",
         "😴 7-8 horas de sueño: el código del día siguiente te lo agradece",

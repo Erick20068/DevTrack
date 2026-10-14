@@ -7,6 +7,7 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.erickguaillas.devtrack.BuildConfig
 import com.erickguaillas.devtrack.R
 import com.erickguaillas.devtrack.data.DevRepository
@@ -23,6 +24,9 @@ class EntrenaFragment : Fragment(R.layout.fragment_entrena) {
     private lateinit var repo: DevRepository
     private var foodBitmap: Bitmap? = null
 
+    private val routineItems by lazy { Wellness.routineItems() }
+    private val tipItems by lazy { Wellness.tipItems() }
+
     private val takePhoto = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bmp ->
         bmp?.let { setFood(it) }
     }
@@ -38,11 +42,32 @@ class EntrenaFragment : Fragment(R.layout.fragment_entrena) {
         _b = FragmentEntrenaBinding.bind(view)
         repo = DevRepository(requireContext())
 
-        // Rutina del día
         val routine = Wellness.todayRoutine()
         b.tvRoutineTitle.text = "${routine.emoji} ${routine.dayName} · ${routine.focus}"
-        b.tvExercises.text = routine.exercises.joinToString("\n") { "•  $it" }
-        b.tvTips.text = Wellness.bodyCareTips.joinToString("\n\n")
+
+        // Checklist de ejercicios
+        val exAdapter = CheckAdapter { id -> lifecycleScope.launch { repo.toggleCheck(repo.todayKey(), id) } }
+        b.rvExercises.layoutManager = LinearLayoutManager(requireContext())
+        b.rvExercises.adapter = exAdapter
+
+        // Checklist de cuidado del cuerpo
+        val tipAdapter = CheckAdapter { id -> lifecycleScope.launch { repo.toggleCheck(repo.todayKey(), id) } }
+        b.rvTips.layoutManager = LinearLayoutManager(requireContext())
+        b.rvTips.adapter = tipAdapter
+
+        repo.checksForDay(repo.todayKey()).observe(viewLifecycleOwner) { checks ->
+            val done = checks.filter { it.done }.map { it.itemId }.toSet()
+
+            exAdapter.submit(routineItems, done)
+            val exDone = routineItems.count { done.contains(it.first) }
+            b.tvRoutineProgress.text = "$exDone de ${routineItems.size} ejercicios completados hoy"
+            b.progressRoutine.max = routineItems.size
+            b.progressRoutine.progress = exDone
+
+            tipAdapter.submit(tipItems, done)
+            val tipDone = tipItems.count { done.contains(it.first) }
+            b.tvTipsProgress.text = "$tipDone de ${tipItems.size} hábitos cumplidos hoy"
+        }
 
         b.btnDoneWorkout.setOnClickListener {
             lifecycleScope.launch {
