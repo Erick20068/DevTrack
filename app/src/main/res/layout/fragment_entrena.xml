@@ -32,6 +32,14 @@
             android:textStyle="bold" />
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Toca el lápiz ✏️ para editar · mantén presionado para borrar"
+            android:textColor="@color/textDim"
+            android:textSize="11sp" />
+
+        <TextView
             android:id="@+id/tvRoutineProgress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,6 +62,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:nestedScrollingEnabled="false" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddExercise"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="➕ Agregar ejercicio"
+            android:textColor="@color/primary" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDoneWorkout"
@@ -89,6 +106,15 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:nestedScrollingEnabled="false" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddCare"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="➕ Agregar hábito de cuidado"
+            android:textColor="@color/primary" />
 
         <TextView
             android:layout_width="wrap_content"

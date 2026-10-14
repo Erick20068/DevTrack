@@ -32,6 +32,7 @@ class TodayFragment : Fragment(R.layout.fragment_today) {
 
         val adapter = TaskAdapter(
             onToggle = { task -> lifecycleScope.launch { repo.toggleTask(task) } },
+            onEdit = { task -> showEditTaskDialog(task) },
             onDelete = { task -> lifecycleScope.launch { repo.deleteTask(task.id) } }
         )
         b.rvTasks.layoutManager = LinearLayoutManager(requireContext())
@@ -63,6 +64,20 @@ class TodayFragment : Fragment(R.layout.fragment_today) {
             .setPositiveButton("Agregar") { _, _ ->
                 val text = dialogView.etInput.text.toString().trim()
                 if (text.isNotEmpty()) lifecycleScope.launch { repo.addTask(text) }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun showEditTaskDialog(task: com.erickguaillas.devtrack.data.Task) {
+        val dialogView = DialogFormBinding.inflate(layoutInflater)
+        dialogView.tvDialogTitle.text = "✏️ Editar tarea"
+        dialogView.etInput.setText(task.title)
+        AlertDialog.Builder(requireContext())
+            .setView(dialogView.root)
+            .setPositiveButton("Guardar") { _, _ ->
+                val text = dialogView.etInput.text.toString().trim()
+                if (text.isNotEmpty()) lifecycleScope.launch { repo.updateTask(task.id, text) }
             }
             .setNegativeButton("Cancelar", null)
             .show()

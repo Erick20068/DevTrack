@@ -29,7 +29,10 @@ class BitacoraFragment : Fragment(R.layout.fragment_bitacora) {
         _b = FragmentBitacoraBinding.bind(view)
         repo = DevRepository(requireContext())
 
-        adapter = JournalAdapter(onDelete = { entry -> confirmDelete(entry) })
+        adapter = JournalAdapter(
+            onEdit = { entry -> showEditDialog(entry) },
+            onDelete = { entry -> confirmDelete(entry) }
+        )
         b.rvJournal.layoutManager = LinearLayoutManager(requireContext())
         b.rvJournal.adapter = adapter
 
@@ -70,6 +73,30 @@ class BitacoraFragment : Fragment(R.layout.fragment_bitacora) {
             .setMessage(entry.text)
             .setPositiveButton("Borrar") { _, _ ->
                 lifecycleScope.launch { repo.deleteJournal(entry.id) }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun showEditDialog(entry: JournalEntry) {
+        val dialogView = DialogEntryBinding.inflate(layoutInflater)
+        dialogView.etInput.setText(entry.text)
+        val labels = listOf("💼 Trabajo / postulaciones", "🗣️ Inglés", "💻 Código", "📱 Apps", "💪 Cuerpo")
+        dialogView.spCategory.adapter = ArrayAdapter(
+            requireContext(), android.R.layout.simple_spinner_dropdown_item, labels
+        )
+        val idx = categories.indexOf(entry.category).coerceAtLeast(0)
+        dialogView.spCategory.setSelection(idx)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("✏️ Editar registro")
+            .setView(dialogView.root)
+            .setPositiveButton("Guardar") { _, _ ->
+                val text = dialogView.etInput.text.toString().trim()
+                if (text.isNotEmpty()) {
+                    val cat = categories[dialogView.spCategory.selectedItemPosition]
+                    lifecycleScope.launch { repo.updateJournal(entry.id, text, cat) }
+                }
             }
             .setNegativeButton("Cancelar", null)
             .show()

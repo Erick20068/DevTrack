@@ -32,6 +32,31 @@ class DevRepository(context: Context) {
 
     suspend fun deleteJournal(id: Long) = db.journalDao().delete(id)
 
+    suspend fun updateJournal(id: Long, text: String, category: String) {
+        val all = db.journalDao().allNow()
+        all.firstOrNull { it.id == id }?.let { db.journalDao().update(it.copy(text = text, category = category)) }
+    }
+
+    suspend fun updateTask(id: Long, title: String) {
+        db.taskDao().allNow().firstOrNull { it.id == id }?.let { db.taskDao().update(it.copy(title = title)) }
+    }
+
+    suspend fun updateGoal(id: Long, title: String) {
+        db.goalDao().allNow().firstOrNull { it.id == id }?.let { db.goalDao().update(it.copy(title = title)) }
+    }
+
+    // ─── Hábitos (ejercicios y cuidado) — CRUD completo ───
+    fun habits(type: String): LiveData<List<Habit>> = db.habitDao().byType(type)
+
+    suspend fun addHabit(text: String, type: String) = db.habitDao().insert(Habit(text = text, type = type))
+
+    suspend fun updateHabit(id: Long, text: String) {
+        val habit = db.habitDao().findById(id) ?: return
+        db.habitDao().update(habit.copy(text = text))
+    }
+
+    suspend fun deleteHabit(id: Long) = db.habitDao().delete(id)
+
     suspend fun journalStats(): Triple<Int, Int, Int> {
         val all = db.journalDao().allNow()
         val todayKey = todayKey()
@@ -66,6 +91,13 @@ class DevRepository(context: Context) {
 
     suspend fun addJournal(text: String, category: String) =
         db.journalDao().insert(JournalEntry(text = text, category = category))
+
+    /** Nombres de los ejercicios/hábitos (para el asistente) */
+    suspend fun habitsSummary(type: String): String {
+        val list = db.habitDao().byTypeNow(type)
+        return if (list.isEmpty()) "ninguno"
+        else list.joinToString("; ") { it.text }
+    }
 
     suspend fun addGoal(title: String) = db.goalDao().insert(Goal(title = title))
 

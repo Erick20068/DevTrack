@@ -14,6 +14,7 @@ object GroqBrain {
 
     sealed class Action {
         data class AddTask(val text: String) : Action()
+        data class AddHabit(val text: String, val type: String) : Action()
         data class AddJournal(val text: String, val category: String) : Action()
         data class Navigate(val dest: String) : Action()
         object ReadTasks : Action()
@@ -45,6 +46,7 @@ REGLAS:
 1. Responde SOLO un JSON en UNA línea, sin markdown, sin comillas dobles dentro de los textos.
 2. Elige UNA acción:
    {"action":"add_task","text":"..."} — crear tarea nueva
+   {"action":"add_habit","type":"EXERCISE|CARE","text":"..."} — agrega un ejercicio a ENTRENA (EXERCISE) o un hábito de cuidado del cuerpo (CARE). Ej: agrega un ejercicio de 20 sentadillas → add_habit EXERCISE.
    {"action":"add_journal","text":"...","category":"TRABAJO|INGLES|CODIGO|APPS|CUERPO"} — registrar actividad hecha
    {"action":"navigate","dest":"hoy|aprender|entrena|bitacora|metas|asistente"} — abrir sección
    {"action":"read_tasks"} — cuando pregunte qué debe hacer hoy
@@ -99,9 +101,11 @@ REGLAS:
         val category = Regex("\"category\"\\s*:\\s*\"([A-Z]+)\"").find(c)?.groupValues?.get(1) ?: "CODIGO"
         val dest = Regex("\"dest\"\\s*:\\s*\"([a-z]+)\"").find(c)?.groupValues?.get(1) ?: "hoy"
         val query = Regex("\"query\"\\s*:\\s*\"([^\"]*)\"").find(c)?.groupValues?.get(1) ?: ""
+        val type = Regex("\"type\"\\s*:\\s*\"([A-Z]+)\"").find(c)?.groupValues?.get(1) ?: "EXERCISE"
 
         return when (action) {
             "add_task" -> Action.AddTask(text ?: "")
+            "add_habit" -> Action.AddHabit(text ?: "", type)
             "add_journal" -> Action.AddJournal(text ?: "", category)
             "navigate" -> Action.Navigate(dest)
             "read_tasks" -> Action.ReadTasks

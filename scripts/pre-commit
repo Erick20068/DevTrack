@@ -1,0 +1,5 @@
+#!/bin/sh
+# Copia el guardián de claves a tu .git/hooks (ejecútalo una vez tras clonar el repo)
+cp "$(dirname "$0")/pre-commit" "$(dirname "$0")/../.git/hooks/pre-commit"
+chmod +x "$(dirname "$0")/../.git/hooks/pre-commit"
+echo "✅ Guardián de claves instalado en .git/hooks/pre-commit"

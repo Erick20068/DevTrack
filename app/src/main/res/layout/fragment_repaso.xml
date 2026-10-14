@@ -18,11 +18,29 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-    <Spinner
-        android:id="@+id/spinnerDeck"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dropdownWrapper"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="12dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:hint="Baraja, quiz o práctica">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+            android:id="@+id/spinnerDeck"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none"
+            android:focusable="false" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/tvDeckInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textColor="@color/textDim"
+        android:textSize="12sp" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -36,7 +54,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="4dp"
-            app:backgroundTint="@color/primary"
             android:textColor="@color/bg"
             android:textSize="12sp"
             android:text="🃏 Flashcards" />
@@ -47,14 +64,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="4dp"
-            app:backgroundTint="@color/secondary"
-            android:textColor="@color/bg"
+            android:textColor="@color/text"
             android:textSize="12sp"
             android:text="✅ Quiz" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnModePractice"
-            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

@@ -38,8 +38,35 @@ interface JournalDao {
     @Query("DELETE FROM journal_entries WHERE id = :id")
     suspend fun delete(id: Long)
 
+    @Update
+    suspend fun update(entry: JournalEntry)
+
     @Query("SELECT * FROM journal_entries ORDER BY timestamp DESC")
     suspend fun allNow(): List<JournalEntry>
+}
+
+@Dao
+interface HabitDao {
+    @Query("SELECT * FROM habits WHERE type = :type ORDER BY createdAt ASC")
+    fun byType(type: String): LiveData<List<Habit>>
+
+    @Insert
+    suspend fun insert(habit: Habit): Long
+
+    @Update
+    suspend fun update(habit: Habit)
+
+    @Query("DELETE FROM habits WHERE id = :id")
+    suspend fun delete(id: Long)
+
+    @Query("SELECT COUNT(*) FROM habits")
+    suspend fun count(): Int
+
+    @Query("SELECT * FROM habits WHERE id = :id LIMIT 1")
+    suspend fun findById(id: Long): Habit?
+
+    @Query("SELECT * FROM habits WHERE type = :type ORDER BY createdAt ASC")
+    suspend fun byTypeNow(type: String): List<Habit>
 }
 
 @Dao

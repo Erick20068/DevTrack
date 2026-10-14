@@ -8,6 +8,7 @@ import com.erickguaillas.devtrack.databinding.ItemGoalBinding
 
 class GoalAdapter(
     private val onBump: (Goal, Int) -> Unit,
+    private val onEdit: (Goal) -> Unit,
     private val onDelete: (Goal) -> Unit
 ) : RecyclerView.Adapter<GoalAdapter.VH>() {
 
@@ -30,6 +31,7 @@ class GoalAdapter(
         holder.b.tvPercent.text = "${goal.progress}%"
         holder.b.btnPlus.setOnClickListener { onBump(goal, 10) }
         holder.b.btnMinus.setOnClickListener { onBump(goal, -10) }
+        holder.b.root.setOnClickListener { onEdit(goal) }
         holder.b.root.setOnLongClickListener { onDelete(goal); true }
     }
 

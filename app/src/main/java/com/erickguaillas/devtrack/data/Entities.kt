@@ -33,6 +33,15 @@ data class Goal(
 data class Check(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val dayKey: String,   // "2026-10-14" o "practice" (global)
-    val itemId: String,   // "routine_0", "tip_3", "practice_git_1"
+    val itemId: String,   // "routine_0", "tip_3", "practice_git_1", "habit_5"
     val done: Boolean = true
+)
+
+/** Ejercicios y hábitos de cuidado — 100% editables por el usuario (CRUD completo) */
+@Entity(tableName = "habits")
+data class Habit(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val text: String,
+    val type: String,        // "EXERCISE" | "CARE"
+    val createdAt: Long = System.currentTimeMillis()
 )

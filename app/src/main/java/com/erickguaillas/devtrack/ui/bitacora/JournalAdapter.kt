@@ -10,6 +10,7 @@ import java.util.Date
 import java.util.Locale
 
 class JournalAdapter(
+    private val onEdit: (JournalEntry) -> Unit = {},
     private val onDelete: (JournalEntry) -> Unit = {}
 ) : RecyclerView.Adapter<JournalAdapter.VH>() {
 
@@ -39,6 +40,7 @@ class JournalAdapter(
         holder.b.tvEmoji.text = emoji(e.category)
         holder.b.tvText.text = e.text
         holder.b.tvTime.text = SimpleDateFormat("EEE d MMM · HH:mm", Locale("es")).format(Date(e.timestamp))
+        holder.b.root.setOnClickListener { onEdit(e) }
         holder.b.root.setOnLongClickListener { onDelete(e); true }
     }
 

@@ -1,11 +1,13 @@
 package com.erickguaillas.devtrack.ui.repaso
 
 import android.animation.ObjectAnimator
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +17,7 @@ import com.erickguaillas.devtrack.data.Deck
 import com.erickguaillas.devtrack.data.DevRepository
 import com.erickguaillas.devtrack.data.Quiz
 import com.erickguaillas.devtrack.databinding.FragmentRepasoBinding
+import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.launch
 
 class RepasoFragment : Fragment(R.layout.fragment_repaso) {
@@ -25,21 +28,19 @@ class RepasoFragment : Fragment(R.layout.fragment_repaso) {
     private lateinit var repo: DevRepository
     private var mode = 0 // 0 = flashcards, 1 = quiz, 2 = práctica
 
-    // Flashcards
     private var deck: Deck = Content.decks.first()
     private var order: List<Int> = deck.cards.indices.toList()
     private var index = 0
     private var showingFront = true
 
-    // Quiz
     private var quiz: Quiz = Content.quizzes.first()
     private var qIndex = 0
     private var score = 0
     private var answered = false
 
-    // Práctica
     private var practicePack = Content.practicePacks.first()
     private lateinit var practiceAdapter: PracticeAdapter
+    private var donePracticeIds: Set<String> = emptySet()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         _b = FragmentRepasoBinding.bind(view)
@@ -49,15 +50,12 @@ class RepasoFragment : Fragment(R.layout.fragment_repaso) {
         b.btnModeQuiz.setOnClickListener { setMode(1) }
         b.btnModePractice.setOnClickListener { setMode(2) }
 
-        b.spinnerDeck.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(p: AdapterView<*>?, v: View?, position: Int, id: Long) {
-                when (mode) {
-                    0 -> { deck = Content.decks[position]; shuffleOrder(); showCard() }
-                    1 -> { quiz = Content.quizzes[position]; startQuiz() }
-                    2 -> { practicePack = Content.practicePacks[position]; bindPractice() }
-                }
+        b.spinnerDeck.setOnItemClickListener { _: AdapterView<*>?, _: View?, position: Int, _: Long ->
+            when (mode) {
+                0 -> { deck = Content.decks[position]; shuffleOrder(); showCard() }
+                1 -> { quiz = Content.quizzes[position]; startQuiz() }
+                2 -> { practicePack = Content.practicePacks[position]; bindPractice() }
             }
-            override fun onNothingSelected(p: AdapterView<*>?) {}
         }
 
         b.btnFlip.setOnClickListener { flipCard() }
@@ -69,7 +67,6 @@ class RepasoFragment : Fragment(R.layout.fragment_repaso) {
         optButtons.forEachIndexed { i, btn -> btn.setOnClickListener { answer(i) } }
         b.btnNextQ.setOnClickListener { nextQuestion() }
 
-        // Práctica
         practiceAdapter = PracticeAdapter { itemId ->
             lifecycleScope.launch { repo.toggleCheck("practice", itemId) }
         }
@@ -77,44 +74,67 @@ class RepasoFragment : Fragment(R.layout.fragment_repaso) {
         b.rvPractice.adapter = practiceAdapter
 
         repo.checksForDay("practice").observe(viewLifecycleOwner) { checks ->
-            val done = checks.filter { it.done }.map { it.itemId }.toSet()
-            practiceAdapter.submit(practicePack.items, done)
-
-            val totalItems = practicePack.items
-            val doneHere = totalItems.count { done.contains(it.id) }
-            val doneAll = Content.practicePacks.sumOf { pack -> pack.items.count { done.contains(it.id) } }
-            b.tvPracticeProgress.text = "✍️ ${practicePack.label}: $doneHere/${totalItems.size} · " +
-                    "Total practicado: $doneAll/${Content.totalPractice}"
+            donePracticeIds = checks.filter { it.done }.map { it.itemId }.toSet()
+            practiceAdapter.submit(practicePack.items, donePracticeIds)
+            updatePracticeProgress()
         }
 
         setMode(0)
     }
 
-    private fun bindPractice() {
-        val done = repo.checksForDay("practice").value?.filter { it.done }?.map { it.itemId }?.toSet() ?: emptySet()
-        practiceAdapter.submit(practicePack.items, done)
-    }
-
-    // ─── Modo ───
+    // ─── Modo (con estado activo visible) ───
     private fun setMode(newMode: Int) {
         mode = newMode
+
         b.containerCards.visibility = if (newMode == 0) View.VISIBLE else View.GONE
         b.containerQuiz.visibility = if (newMode == 1) View.VISIBLE else View.GONE
         b.containerPractice.visibility = if (newMode == 2) View.VISIBLE else View.GONE
+
+        styleModeButtons(newMode)
 
         val labels = when (newMode) {
             0 -> Content.decks.map { it.label }
             1 -> Content.quizzes.map { it.label }
             else -> Content.practicePacks.map { it.label }
         }
-        b.spinnerDeck.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, labels)
-        b.spinnerDeck.setSelection(0)
+        b.spinnerDeck.setAdapter(ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, labels))
+        b.spinnerDeck.setText(labels.first(), false)
 
         when (newMode) {
             0 -> { deck = Content.decks.first(); shuffleOrder(); showCard() }
             1 -> { quiz = Content.quizzes.first(); startQuiz() }
             else -> { practicePack = Content.practicePacks.first(); bindPractice() }
         }
+    }
+
+    private fun styleModeButtons(active: Int) {
+        val primary = ContextCompat.getColor(requireContext(), R.color.primary)
+        val card = ContextCompat.getColor(requireContext(), R.color.card)
+        val textColor = ContextCompat.getColor(requireContext(), R.color.text)
+        val onPrimary = ContextCompat.getColor(requireContext(), R.color.bg)
+
+        listOf(b.btnModeCards, b.btnModeQuiz, b.btnModePractice).forEachIndexed { i, btn: MaterialButton ->
+            if (i == active) {
+                btn.backgroundTintList = ColorStateList.valueOf(primary)
+                btn.setTextColor(onPrimary)
+            } else {
+                btn.backgroundTintList = ColorStateList.valueOf(card)
+                btn.setTextColor(textColor)
+            }
+        }
+    }
+
+    private fun updatePracticeProgress() {
+        val doneHere = practicePack.items.count { donePracticeIds.contains(it.id) }
+        val doneAll = Content.practicePacks.sumOf { pack -> pack.items.count { donePracticeIds.contains(it.id) } }
+        b.tvPracticeProgress.text = "✍️ ${practicePack.label}: $doneHere/${practicePack.items.size} · " +
+                "Total practicado: $doneAll/${Content.totalPractice}"
+        b.tvDeckInfo.text = "💡 Toca pista o solución · marca Practicado ✅ para guardar tu avance"
+    }
+
+    private fun bindPractice() {
+        practiceAdapter.submit(practicePack.items, donePracticeIds)
+        updatePracticeProgress()
     }
 
     // ─── Flashcards ───
@@ -128,6 +148,7 @@ class RepasoFragment : Fragment(R.layout.fragment_repaso) {
         val card = deck.cards[order[index]]
         b.tvCard.text = if (showingFront) card.front else card.back
         b.tvCounter.text = "${deck.emoji} ${index + 1}/${order.size} · toca la tarjeta para voltear"
+        b.tvDeckInfo.text = "📚 ${deck.cards.size} tarjetas en esta baraja · ${Content.decks.size} barajas disponibles"
         b.cardFlash.setOnClickListener { flipCard() }
     }
 
@@ -158,6 +179,7 @@ class RepasoFragment : Fragment(R.layout.fragment_repaso) {
         b.tvQuestion.text = q.question
         b.tvExplanation.visibility = View.GONE
         b.btnNextQ.visibility = View.GONE
+        b.tvDeckInfo.text = "🎯 ${quiz.questions.size} preguntas · te explico cada respuesta"
 
         val buttons = listOf(b.btnOpt1, b.btnOpt2, b.btnOpt3, b.btnOpt4)
         buttons.forEachIndexed { i, btn ->

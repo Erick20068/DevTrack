@@ -1,0 +1,4 @@
+#!/bin/sh
+cp "$(dirname "$0")/pre-commit" "$(dirname "$0")/../.git/hooks/pre-commit"
+chmod +x "$(dirname "$0")/../.git/hooks/pre-commit"
+echo "✅ Guardián de claves instalado en .git/hooks/pre-commit"

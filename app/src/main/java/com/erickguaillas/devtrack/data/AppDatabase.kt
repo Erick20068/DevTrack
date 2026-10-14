@@ -9,13 +9,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [Task::class, JournalEntry::class, Goal::class, Check::class], version = 2, exportSchema = false)
+@Database(entities = [Task::class, JournalEntry::class, Goal::class, Check::class, Habit::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun taskDao(): TaskDao
     abstract fun journalDao(): JournalDao
     abstract fun goalDao(): GoalDao
     abstract fun checkDao(): CheckDao
+    abstract fun habitDao(): HabitDao
 
     companion object {
         @Volatile
@@ -50,6 +51,13 @@ abstract class AppDatabase : RoomDatabase() {
                     database.journalDao().insert(
                         JournalEntry(text = "Empecé a usar DevTrack 🚀", category = "CODIGO")
                     )
+                    // Ejercicios y hábitos iniciales (100% editables)
+                    Wellness.routineItems().forEach { (_, text) ->
+                        database.habitDao().insert(Habit(text = text, type = "EXERCISE"))
+                    }
+                    Wellness.tipItems().forEach { (_, text) ->
+                        database.habitDao().insert(Habit(text = text, type = "CARE"))
+                    }
                 }
             }
         }

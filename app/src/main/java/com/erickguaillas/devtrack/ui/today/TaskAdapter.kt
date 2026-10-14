@@ -9,6 +9,7 @@ import com.erickguaillas.devtrack.databinding.ItemTaskBinding
 
 class TaskAdapter(
     private val onToggle: (Task) -> Unit,
+    private val onEdit: (Task) -> Unit,
     private val onDelete: (Task) -> Unit
 ) : RecyclerView.Adapter<TaskAdapter.VH>() {
 
@@ -35,6 +36,7 @@ class TaskAdapter(
             holder.b.cbTask.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
 
         holder.b.cbTask.setOnCheckedChangeListener { _, _ -> onToggle(task) }
+        holder.b.btnEditTask.setOnClickListener { onEdit(task) }
         holder.b.root.setOnLongClickListener { onDelete(task); true }
     }
 

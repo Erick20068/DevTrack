@@ -25,6 +25,7 @@ class MetasFragment : Fragment(R.layout.fragment_metas) {
 
         val adapter = GoalAdapter(
             onBump = { goal, delta -> lifecycleScope.launch { repo.bumpGoal(goal, delta) } },
+            onEdit = { goal -> showEditGoalDialog(goal) },
             onDelete = { goal -> lifecycleScope.launch { repo.deleteGoal(goal.id) } }
         )
         b.rvGoals.layoutManager = LinearLayoutManager(requireContext())
@@ -52,6 +53,20 @@ class MetasFragment : Fragment(R.layout.fragment_metas) {
             .setPositiveButton("Agregar") { _, _ ->
                 val text = dialogView.etInput.text.toString().trim()
                 if (text.isNotEmpty()) lifecycleScope.launch { repo.addGoal(text) }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun showEditGoalDialog(goal: com.erickguaillas.devtrack.data.Goal) {
+        val dialogView = DialogFormBinding.inflate(layoutInflater)
+        dialogView.tvDialogTitle.text = "✏️ Editar meta"
+        dialogView.etInput.setText(goal.title)
+        AlertDialog.Builder(requireContext())
+            .setView(dialogView.root)
+            .setPositiveButton("Guardar") { _, _ ->
+                val text = dialogView.etInput.text.toString().trim()
+                if (text.isNotEmpty()) lifecycleScope.launch { repo.updateGoal(goal.id, text) }
             }
             .setNegativeButton("Cancelar", null)
             .show()

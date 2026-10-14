@@ -36,6 +36,9 @@ Creada por [Erick Guaillas](https://github.com/erickguaillasest-dev) · Cuenca, 
 - [x] **v3**: Modo **Práctica**: problemas reales de código (Git, APIs, Java/Kotlin, SQL, Python/JS) y ejercicios de inglés (escritura, lectura, pronunciación)
 - [x] **v3**: +6 barajas (APIs, Docker, Algoritmos, Redes, Phrasal verbs) y +4 quizzes · Bitácora con filtros y estadísticas · Consejo financiero diario + mentor financiero con IA
 - [x] **v3**: Voz JARVIS opcional con ElevenLabs + autoplay de Spotify
+- [x] **v5**: **CRUD completo** — ejercicios, hábitos de cuidado, tareas, metas y bitácora se pueden crear, editar (✏️) y borrar (mantener presionado)
+- [x] **v5**: El asistente crea hábitos por voz: *"agrega un ejercicio de 20 sentadillas"*, *"crea un hábito de tomar 2L de agua"*
+- [x] **v5**: Rediseño de Aprender — dropdown Material 3, modo activo resaltado, información contextual y estados vacíos claros
 - [ ] Widget de tareas en pantalla de inicio
 - [ ] Sistema de rachas (streaks) con 🔥
 - [ ] Más barajas de repaso (Python avanzado, Docker, Kubernetes)

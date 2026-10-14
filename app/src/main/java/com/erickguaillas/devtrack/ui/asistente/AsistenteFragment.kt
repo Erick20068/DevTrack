@@ -120,6 +120,9 @@ class AsistenteFragment : Fragment(R.layout.fragment_asistente) {
             lifecycleScope.launch {
                 val context = buildString {
                     append(repo.tasksSummary()).append(". ").append(repo.goalsSummary())
+                    append(". Ejercicios en Entrena: ").append(repo.habitsSummary("EXERCISE"))
+                    append(". Hábitos de cuidado: ").append(repo.habitsSummary("CARE"))
+                    append(". Bitácora reciente: ").append(repo.weekSummaryText())
                 }
                 val action = GroqBrain.think(heard, context, BuildConfig.GROQ_API_KEY)
                 b.tvStatus.text = "🎙️ Toca el micrófono y habla"
@@ -135,6 +138,10 @@ class AsistenteFragment : Fragment(R.layout.fragment_asistente) {
             is GroqBrain.Action.AddTask -> {
                 lifecycleScope.launch { repo.addTask(a.text) }
                 speak("Listo, tarea agregada: ${a.text}")
+            }
+            is GroqBrain.Action.AddHabit -> {
+                lifecycleScope.launch { repo.addHabit(a.text, a.type) }
+                speak(if (a.type == "CARE") "Hábito de cuidado agregado: ${a.text}" else "Ejercicio agregado a Entrena: ${a.text}")
             }
             is GroqBrain.Action.AddJournal -> {
                 lifecycleScope.launch { repo.addJournal(a.text, a.category) }
@@ -182,6 +189,10 @@ class AsistenteFragment : Fragment(R.layout.fragment_asistente) {
             is VoiceCommands.Command.AddTask -> {
                 lifecycleScope.launch { repo.addTask(cmd.text) }
                 speak("Listo, tarea agregada: ${cmd.text}")
+            }
+            is VoiceCommands.Command.AddHabit -> {
+                lifecycleScope.launch { repo.addHabit(cmd.text, cmd.type) }
+                speak(if (cmd.type == "CARE") "Hábito agregado: ${cmd.text}" else "Ejercicio agregado a Entrena: ${cmd.text}")
             }
             is VoiceCommands.Command.AddJournal -> {
                 lifecycleScope.launch { repo.addJournal(cmd.text, cmd.category) }

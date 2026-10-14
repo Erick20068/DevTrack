@@ -8,6 +8,7 @@ object VoiceCommands {
 
     sealed class Command {
         data class AddTask(val text: String) : Command()
+        data class AddHabit(val text: String, val type: String) : Command()
         data class AddJournal(val text: String, val category: String) : Command()
         data class Navigate(val destId: Int, val destName: String) : Command()
         object ReadTasks : Command()
@@ -23,6 +24,12 @@ object VoiceCommands {
         val t = normalize(raw)
 
         return when {
+            // Hábitos y ejercicios
+            t.startsWith("agrega un ejercicio") || t.startsWith("agregar ejercicio") || t.startsWith("nuevo ejercicio") ->
+                Command.AddHabit(t.substringAfter("ejercicio").trim(), "EXERCISE")
+            (t.startsWith("agrega") || t.startsWith("crea") || t.startsWith("nuevo") || t.startsWith("anade")) && t.contains("habito") ->
+                Command.AddHabit(t.substringAfter("habito").trim(), "CARE")
+
             // Agregar tarea
             t.startsWith("agregar tarea") || t.startsWith("agrega tarea") ||
             t.startsWith("nueva tarea") || t.startsWith("anade tarea") || t.startsWith("añade tarea") ->
